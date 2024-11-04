@@ -27,6 +27,7 @@ const GET_ANIME_BY_ID = graphql(`
         title {
           english
         }
+        status
         format
         duration
         genres
