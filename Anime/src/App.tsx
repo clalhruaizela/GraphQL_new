@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AnimeHome from "./home/anime_Home";
+import AnimeHome from "./home/animeHome";
 
 const queryClient = new QueryClient();
 function App() {

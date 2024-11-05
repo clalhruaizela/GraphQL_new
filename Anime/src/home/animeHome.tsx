@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import graphqlClient from "../graphql/getGraphqlClient";
-import GET_ANIME_BY_ID from "../graphql/get_anime_by_id/anime";
+import GET_ANIME_BY_ID from "../graphql/get_anime_by_id/animeMedia";
 
 import { useState } from "react";
 import { formatDuration } from "./utilties/duration";
@@ -29,7 +29,7 @@ const AnimeHome = () => {
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
         page,
-        perPage: 28,
+        perPage: 30,
         lastPage: 20,
       });
     },
@@ -49,13 +49,17 @@ const AnimeHome = () => {
   };
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
-  // console.log(data);
+  // console.log("Fetched Anime Data1:", data);
+
   const totalPages = data?.Page?.pageInfo?.lastPage || 1;
   return (
     <div className="min-w-full min-h-screen bg-slate-900">
       <div className="lg:grid lg:grid-cols-6 lg:w-9/12 lg:mx-auto ">
-        <div className="lg:col-span-4 ">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mx-4 ">
+        <h2 className="col-span-6 fornt-bold text-2xl pt-4  text-white">
+          Current Airing
+        </h2>
+        <div className="lg:col-span-6  ">
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mx-4 ">
             {/* <div className="flex flex-"> */}
             {data?.Page?.media?.map((anime: any) => (
               <Card
@@ -68,7 +72,7 @@ const AnimeHome = () => {
                       <img
                         src={anime.coverImage?.large}
                         alt={anime.title?.english}
-                        width="100%"
+                        width="70%"
                         onMouseEnter={() => setHoverId(anime.id)}
                         onMouseLeave={() => setHoverId(null)}
                       />
@@ -95,40 +99,7 @@ const AnimeHome = () => {
               </Card>
             ))}
           </div>
-          {/* </div> */}
-        </div>
-        <div className=" lg:col-span-2 flex flex-col  items-center lg:w-9/12  bg-slate-700 ">
-          {data?.Page?.media?.map((anime: any) => (
-            <div key={anime.id} className=" w-full ">
-              <Card className="flex flex-row bg-slate-700 border-l-0 border-r-0  rounded-none border-gray-600 text-white">
-                <div className="py-4 pl-14">
-                  <img
-                    src={anime.coverImage?.large}
-                    alt={anime.title?.english}
-                    width="80%"
-                  />
-                </div>
-                <div className="flex flex-col pt-5 pl-2 text-sm">
-                  <div>
-                    <div className="w-40">{anime.title?.english}</div>
-                  </div>
-                  <div>
-                    <div>{anime.format}</div>
-                    <div>
-                      {anime.duration ? formatDuration(anime.duration) : "N/A"}
-                    </div>
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    {/* <p>Genres: {anime.genres.join(" , ")} </p> */}
-                    {/* <p>Season: {anime.season} </p> */}
-                    <p>Episode: {anime.episodes} </p>
-                    {/* <p>Description: {anime.description}</p> */}
-                  </div>
-                </div>
-              </Card>
-            </div>
-          ))}
-          <div>
+          <div className="py-10">
             {totalPages > 1 && (
               <Pagination>
                 <PaginationContent>
@@ -142,6 +113,7 @@ const AnimeHome = () => {
                         return (
                           <PaginationItem key={item}>
                             <PaginationLink
+                              className="bg-gray-500"
                               isActive={item === page}
                               onClick={() => {
                                 window.scrollTo(0, 0);
@@ -153,7 +125,12 @@ const AnimeHome = () => {
                           </PaginationItem>
                         );
                       } else if (item === page - 3 || item === page + 3) {
-                        return <PaginationEllipsis key={item} />;
+                        return (
+                          <PaginationEllipsis
+                            key={item}
+                            className="text-white"
+                          />
+                        );
                       }
                       return null;
                     }
