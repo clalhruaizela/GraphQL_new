@@ -1,66 +1,69 @@
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 import graphqlClient from "../graphql/getGraphqlClient";
-import GET_ANIME_BY_ID from "../graphql/get_anime_by_id/animeMedia";
-
-import { useState } from "react";
-import { formatDuration } from "./utilties/duration";
-import { Card, CardHeader } from "@/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useSearchParams } from "react-router-dom";
+// import GET_ANIME_BY_ID from "../graphql/get_anime_by_id/animeMedia";
+// import { useState } from "react";
+// import { formatDuration } from "./utilties/duration";
+// import { Card, CardHeader } from "@/components/ui/card";
+// import {
+//   Pagination,
+//   PaginationContent,
+//   PaginationEllipsis,
+//   PaginationItem,
+//   PaginationLink,
+// } from "@/components/ui/pagination";
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from "@/components/ui/popover";
+// import { useSearchParams } from "react-router-dom";
+import MediaPage from "./pages/mediaPage";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
-  const [hoverId, setHoverId] = useState<number | null>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-  const { isLoading, isError, data } = useQuery({
-    queryKey: ["animePage", page],
-    queryFn: async () => {
-      return await graphql.request(GET_ANIME_BY_ID, {
-        page,
-        perPage: 30,
-        lastPage: 20,
-      });
-    },
-    keepPreviousData: true,
-  });
+  // const [hoverId, setHoverId] = useState<number | null>(null);
+  // const [searchParams, setSearchParams] = useSearchParams();
+  // const page = parseInt(searchParams.get("page") || "1");
+  // const { isLoading, isError, data } = useQuery({
+  //   queryKey: ["animePage", page],
+  //   queryFn: async () => {
+  //     return await graphql.request(GET_ANIME_BY_ID, {
+  //       page,
+  //       perPage: 30,
+  //       lastPage: 20,
+  //     });
+  //   },
+  //   keepPreviousData: true,
+  // });
 
-  const handlePageChange = (page: number) => {
-    setSearchParams(
-      (param) => {
-        param.set("page", page.toString());
-        return param;
-      },
-      {
-        preventScrollReset: true,
-      }
-    );
-  };
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
+  // const handlePageChange = (page: number) => {
+  //   setSearchParams(
+  //     (param) => {
+  //       param.set("page", page.toString());
+  //       return param;
+  //     },
+  //     {
+  //       preventScrollReset: true,
+  //     }
+  //   );
+  // };
+  // if (isLoading) return <div>Loading...</div>;
+  // if (isError) return <div>Error</div>;
   // console.log("Fetched Anime Data1:", data);
 
-  const totalPages = data?.Page?.pageInfo?.lastPage || 1;
+  // const totalPages = data?.Page?.pageInfo?.lastPage || 1;
   return (
     <div className="min-w-full min-h-screen bg-slate-900">
       <div className="lg:grid lg:grid-cols-6 lg:w-9/12 lg:mx-auto ">
-        <h2 className="col-span-6 fornt-bold text-2xl pt-4  text-white">
+        <div>
+          {" "}
+          <MediaPage />{" "}
+        </div>
+        {/* <h2 className="col-span-6 fornt-bold text-2xl pt-4  text-white">
           Current Airing
         </h2>
         <div className="lg:col-span-6  ">
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mx-4 ">
-            {/* <div className="flex flex-"> */}
             {data?.Page?.media?.map((anime: any) => (
               <Card
                 key={anime.id}
@@ -139,7 +142,7 @@ const AnimeHome = () => {
               </Pagination>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
