@@ -1,12 +1,5 @@
 import { Card, CardHeader } from "@/components/ui/card";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -14,38 +7,23 @@ import {
 import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
 import graphqlClient from "@/graphql/getGraphqlClient";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
 
-const MediaPage = () => {
-  const graphql = graphqlClient();
+const MediaPage = ({ anime }: { anime: string }) => {
   // const [hoverId, setHoverId] = useState<number | null>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-
+  // const [searchParams, setSearchParams] = useSearchParams();
+  // const page = parseInt(searchParams.get("page") || "1");
+  const graphql = graphqlClient();
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["animePageMedia", page],
+    queryKey: ["media", anime],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
-        page,
-        perPage: 28,
+        anime,
       });
     },
-    keepPreviousData: true,
   });
-  const handlePageChange = (page: number) => {
-    setSearchParams(
-      (param) => {
-        param.set("page", page.toString());
-        return param;
-      },
-      {
-        preventScrollReset: true,
-      }
-    );
-  };
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
-  const totalPages = data?.Page?.pageInfo?.lastPage;
   return (
     <div className="w-full">
       <div className="lg:col-span-6">
@@ -74,43 +52,6 @@ const MediaPage = () => {
               <div className="text-white"> {anime?.title?.english} </div>
             </Card>
           ))}
-        </div>
-        <div className="py-10">
-          {totalPages > 1 && (
-            <Pagination>
-              <PaginationContent>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (item) => {
-                    if (
-                      item === 1 ||
-                      item === totalPages ||
-                      Math.abs(item - page) <= 2
-                    ) {
-                      return (
-                        <PaginationItem key={item}>
-                          <PaginationLink
-                            className="bg-gray-500"
-                            isActive={item === page}
-                            onClick={() => {
-                              window.scrollTo(0, 0);
-                              handlePageChange(item);
-                            }}
-                          >
-                            {item}
-                          </PaginationLink>
-                        </PaginationItem>
-                      );
-                    } else if (item === page - 3 || item === page + 3) {
-                      return (
-                        <PaginationEllipsis key={item} className="text-white" />
-                      );
-                    }
-                    return null;
-                  }
-                )}
-              </PaginationContent>
-            </Pagination>
-          )}
         </div>
       </div>
     </div>

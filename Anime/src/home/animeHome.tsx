@@ -1,77 +1,88 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import graphqlClient from "../graphql/getGraphqlClient";
-// import GET_ANIME_BY_ID from "../graphql/get_anime_by_id/animeMedia";
 import { useEffect, useState } from "react";
-// import { formatDuration } from "./utilties/duration";
-// import { Card, CardHeader } from "@/components/ui/card";
-// import {
-//   Pagination,
-//   PaginationContent,
-//   PaginationEllipsis,
-//   PaginationItem,
-//   PaginationLink,
-// } from "@/components/ui/pagination";
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
-// } from "@/components/ui/popover";
-// import { useSearchParams } from "react-router-dom";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
 import MediaPage from "./pages/mediaPage";
-import { GET_SEARCH_ANIME } from "@/graphql/search/animeSearch";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "react-router-dom";
+import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [query, setQuery] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
+  const [suggestion, setSuggestion] = useState<string[]>([]);
+  const [submit, setSubmit] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   // const [hoverId, setHoverId] = useState<number | null>(null);
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // const page = parseInt(searchParams.get("page") || "1");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["animeSearch", query, page],
+    queryKey: ["animeSearch", searchTerm, page],
     queryFn: async () => {
-      if (!query) return;
-      const data = await graphql.request(GET_ANIME_BY_ID, {
-        search: query,
+      return await graphql.request(GET_ANIME_BY_ID, {
+        search: searchTerm,
         page,
+        perPage: 30,
       });
-      return data;
     },
-    enabled: !!query,
+    placeholderData: keepPreviousData,
+    enabled: !!searchParams,
   });
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setQuery(searchTerm);
+  const handleSearchSubmit = () => {
+    // e.preventDefault();
+    setSubmit(searchTerm);
+    // e.currentTarget.reset();
   };
 
   const handlePageChange = (newPage: number) => {
-    setPage(newPage);
+    setSearchParams(
+      (param) => {
+        param.set("page", newPage.toString());
+        return param;
+      },
+      {
+        preventScrollReset: true,
+      }
+    );
   };
-  // const handlePageChange = (page: number) => {
-  //   setSearchParams(
-  //     (param) => {
-  //       param.set("page", page.toString());
-  //       return param;
-  //     },
-  //     {
-  //       preventScrollReset: true,
-  //     }
-  //   );
-  // };
 
-  // if (isLoading) return <div>Loading...</div>;
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchTerm(suggestion);
+    setSuggestion([]);
+  };
+
+  const filteredData =
+    data?.Page?.media?.filter((anime) =>
+      submit
+        ? anime?.title?.english?.toLowerCase().includes(submit.toLowerCase())
+        : true
+    ) || [];
+
+  useEffect(() => {
+    if (submit && filteredData.length === 0) {
+      setErrorMessage("No results found. Please try a different search term.");
+    } else {
+      setErrorMessage("");
+    }
+  }, [submit, filteredData.length]);
+
+  if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
   // console.log("Fetched Anime Data1:", data);
 
-  // const totalPages = data?.Page?.pageInfo?.lastPage || 1;
+  const totalPages = data?.Page?.pageInfo?.lastPage || 1;
   return (
-    <div className="min-w-full min-h-screen bg-slate-900">
+    <div className="min-w-full min-h-screen ">
       <div className="lg:grid lg:grid-cols-6 lg:w-9/12 lg:mx-auto ">
         <div className="lg:col-span-6">
-          <form onSubmit={handleSearch}>
+          <>
             <input
               type="text"
               value={searchTerm}
@@ -81,104 +92,39 @@ const AnimeHome = () => {
               className="border mb-2 px-2 rounded-sm h-6 w-36 md:mt-4 lg:h-10 lg:w-60"
             />
             <Button
-              type="submit"
+              // type="submit"
+              onClick={handleSearchSubmit}
               className="h-6 w-14 lg:h-10"
               variant="destructive"
             >
               Search
             </Button>
-          </form>
-          {isLoading && <p>Loading...</p>}{" "}
-          {isError && <p>Error fetching data.</p>}
-          <div>
-            {/* {data && (
-            <>
-              <ul className="bg-white w-36 h-28">
-                {data?.Page?.media?.map((anime: any) => (
-                  <li key={anime.id}>
-                    {" "}
-                    <img
-                      src={anime.coverImage.large}
-                      alt={anime.title.english}
-                    />{" "}
-                    <h3>{anime.title.english}</h3> <p>{anime.description}</p>{" "}
-                    <ul>
-                      {" "}
-                      {anime.genres.map((genre: string) => (
-                        <li key={genre}>{genre}</li>
-                      ))}{" "}
-                    </ul>{" "}
-                  </li>
-                ))}
-              </ul>
-              <div>
-                {Array.from(
-                  { length: data?.Page?.pageInfo?.lastPage },
-                  (_, i) => i + 1
-                ).map((pageNum) => (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    disabled={pageNum === page}
-                  >
-                    {pageNum}{" "}
-                  </button>
-                ))}
-              </div>
-            </>
-          )} */}
-          </div>
-          {/* <div>
-          {data?.Page?.media?.map((anime: any) => (
-            <div key={anime.id}>
-              <img src={anime.coverImage?.large} alt={anime.title?.english} />
-              <div>{anime.title?.english || anime.title?.romaji}</div>
+            <div>
+              {suggestion.length > 0 && (
+                <ul className="absolute">
+                  {suggestion.map((suggestion) => (
+                    <li
+                      key={suggestion}
+                      className="text-red-400"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          ))}
-        </div> */}
-          <div className="lg:col-span-6">{/* <MediaPage /> */}</div>
-          {/* <h2 className="col-span-6 fornt-bold text-2xl pt-4  text-white">
-          Current Airing
-        </h2>
-        <div className="lg:col-span-6  ">
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mx-4 ">
-            {data?.Page?.media?.map((anime: any) => (
-              <Card
-                key={anime.id}
-                className=" flex flex-col justify-center  text-white border-none bg-slate-900"
-              >
-                <CardHeader>
-                  <Popover>
-                    <PopoverTrigger>
-                      <img
-                        src={anime.coverImage?.large}
-                        alt={anime.title?.english}
-                        width="70%"
-                        onMouseEnter={() => setHoverId(anime.id)}
-                        onMouseLeave={() => setHoverId(null)}
-                      />
-                    </PopoverTrigger>
-                    {hoverId === anime.id && (
-                      <PopoverContent className="">
-                        <h2 className="font-bold"> {anime.title?.english} </h2>
-                        <div>Status: {anime.status} Airing </div>
-                      </PopoverContent>
-                    )}
-                  </Popover>
-                </CardHeader>
-                <div className="flex flex-col justify-center text-sm">
-                  <div>
-                    <div className="truncate">{anime.title?.english}</div>
-                  </div>
-                  <div className="flex  gap-2">
-                    <div>{anime.format}</div>
-                    <div>
-                      {anime.duration ? formatDuration(anime.duration) : "N/A"}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
+          </>
+          <div>
+            {errorMessage ? (
+              <div>
+                <div>{errorMessage}</div>
+              </div>
+            ) : (
+              filteredData.map((anime) => (
+                <div key={anime?.id}>{/* <MediaPage anime={anime} /> */}</div>
+              ))
+            )}
           </div>
           <div className="py-10">
             {totalPages > 1 && (
@@ -220,7 +166,7 @@ const AnimeHome = () => {
               </Pagination>
             )}
           </div>
-        </div> */}
+          <div className="lg:col-span-6">{/* <MediaPage /> */}</div>
         </div>
       </div>
     </div>
