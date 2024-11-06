@@ -14,7 +14,6 @@ import {
 import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
 import graphqlClient from "@/graphql/getGraphqlClient";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const MediaPage = () => {
