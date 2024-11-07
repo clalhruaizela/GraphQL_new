@@ -1,6 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import graphqlClient from "../graphql/getGraphqlClient";
-import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -8,139 +6,174 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import MediaPage from "./pages/mediaPage";
-import { Button } from "@/components/ui/button";
-import { useSearchParams } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
+import graphqlClient from "@/graphql/getGraphqlClient";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { formatTimeUntilAiring } from "./utilties/formatTimeUntilAiring";
+import { SmileOutlined } from "@ant-design/icons";
+import Layout from "@/components/ui/layout/Layout";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [suggestion, setSuggestion] = useState<string[]>([]);
-  const [submit, setSubmit] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  // const [hoverId, setHoverId] = useState<number | null>(null);
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["animeSearch", searchTerm, page],
+    queryKey: ["anime", page],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
-        search: searchTerm,
         page,
         perPage: 30,
+        lastPage: 10,
       });
     },
     placeholderData: keepPreviousData,
     enabled: !!searchParams,
   });
 
-  const handleSearchSubmit = () => {
-    // e.preventDefault();
-    setSubmit(searchTerm);
-    // e.currentTarget.reset();
+  const handlePageChange = (page: number) => {
+    setSearchParams((param) => {
+      param.set("page", page.toString());
+      return param;
+    });
   };
 
-  const handlePageChange = (newPage: number) => {
-    setSearchParams(
-      (param) => {
-        param.set("page", newPage.toString());
-        return param;
-      },
-      {
-        preventScrollReset: true,
-      }
-    );
+  const onClickCard = (id: number) => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      navigate({
+        pathname: `/home/${id}`,
+        search: `?name=${data?.Page?.media?.[0]?.title?.english}`,
+      });
+    }, 500);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchTerm(suggestion);
-    setSuggestion([]);
-  };
-
-  const filteredData =
-    data?.Page?.media?.filter((anime) =>
-      submit
-        ? anime?.title?.english?.toLowerCase().includes(submit.toLowerCase())
-        : true
-    ) || [];
-
-  useEffect(() => {
-    if (submit && filteredData.length === 0) {
-      setErrorMessage("No results found. Please try a different search term.");
-    } else {
-      setErrorMessage("");
-    }
-  }, [submit, filteredData.length]);
-
+  const totalPages = Math.min(data?.Page?.pageInfo?.total || 1, 10);
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
-  // console.log("Fetched Anime Data1:", data);
-
-  const totalPages = data?.Page?.pageInfo?.lastPage || 1;
   return (
-    <div className="min-w-full min-h-screen ">
-      <div className="lg:grid lg:grid-cols-6 lg:w-9/12 lg:mx-auto ">
-        <div className="lg:col-span-6">
-          <>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              // onKeyDown={handleKeyDown}
-              placeholder="Search Anime"
-              className="border mb-2 px-2 rounded-sm h-6 w-36 md:mt-4 lg:h-10 lg:w-60"
-            />
-            <Button
-              // type="submit"
-              onClick={handleSearchSubmit}
-              className="h-6 w-14 lg:h-10"
-              variant="destructive"
-            >
-              Search
-            </Button>
-            <div>
-              {suggestion.length > 0 && (
-                <ul className="absolute">
-                  {suggestion.map((suggestion) => (
-                    <li
-                      key={suggestion}
-                      className="text-red-400"
-                      onClick={() => handleSuggestionClick(suggestion)}
-                    >
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </>
-          <div>
-            {errorMessage ? (
-              <div>
-                <div>{errorMessage}</div>
-              </div>
-            ) : (
-              filteredData.map((anime) => (
-                <div key={anime?.id}>{/* <MediaPage anime={anime} /> */}</div>
-              ))
-            )}
+    <Layout>
+      <div className="w-full min-h-screen py-6">
+        <div className="grid grid-cols-6 w-9/12 mx-auto">
+          <div className="col-span-6 grid grid-cols-2 lg:grid-cols-6 mx-4 gap-4">
+            {data?.Page?.media?.map((anime: any) => (
+              <Card
+                key={anime?.id}
+                className="w-full text-gray-400 hover:text-gray-600"
+              >
+                <div className="flex flex-col justify-center items-center mb-5 h-50 ">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <img
+                          src={anime?.coverImage?.large}
+                          alt={anime?.title?.english}
+                          width="70%"
+                          height="70%"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
+                        <div>
+                          <h2 className="text-gray-800 text-lg font-semibold">
+                            {anime?.title?.english || anime?.title?.romaji}
+                          </h2>
+
+                          {anime?.airingSchedule?.edges
+                            ?.filter(
+                              (edge: any) => edge.node.timeUntilAiring > 0
+                            )
+                            .slice(0, 1)
+                            .map((edge: any, index: number) => (
+                              <div
+                                key={index}
+                                className="flex py-2 gap-2 font-bold items-center"
+                              >
+                                <span className="text-lg font-semibold">
+                                  Ep {edge.node?.episode}
+                                </span>
+                                <span className="text-base text-gray-600">
+                                  airing in{" "}
+                                  {formatTimeUntilAiring(
+                                    edge.node?.timeUntilAiring
+                                  )}{" "}
+                                  remaining
+                                </span>
+                              </div>
+                            ))}
+                          <div className=" flex flex-row gap-1 ">
+                            <p className="text-green-400 text-lg">
+                              <SmileOutlined />
+                            </p>
+                            <p className="font-bold pt-1">
+                              {anime.averageScore}%
+                            </p>
+                          </div>
+                          <div className="flex flex-row gap-2  text-gray-500">
+                            <p> {anime.season} </p>
+                            <p> {anime?.seasonYear} </p>
+                          </div>
+                          <div className="flex flex-row gap-2 pb-2 text-gray-500">
+                            <p> {anime?.format} Show </p>
+                            <p> {anime?.episodes} episodes </p>
+                          </div>
+                          <div className="flex flex-row gap-2 flex-wrap  pt-2">
+                            {anime.genres
+                              ?.slice(0, 3)
+                              .map((genre: string, index: number) => (
+                                <div
+                                  key={index}
+                                  className={`  py-1 text-xs font-semibold rounded-xl text-center  ${
+                                    genre === "Comedy"
+                                      ? "bg-red-500 text-white w-20"
+                                      : "bg-red-500 text-white w-20"
+                                  }`}
+                                >
+                                  {" "}
+                                  {genre}{" "}
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <CardContent>
+                  <div className="text-sm font-bold   flex justify-center items-center w-48  ml-3">
+                    <h1>
+                      {anime?.title?.english ||
+                        anime?.title?.romaji ||
+                        anime?.title?.native ||
+                        anime.title?.userPreferred}
+                    </h1>
+                    {/* <p>{anime?.description}</p> */}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-          <div className="py-10">
+          <div className=" col-span-6 text-white">
             {totalPages > 1 && (
-              <Pagination>
+              <Pagination className="py-5 w-24 border-t-2 md:py-10 ">
                 <PaginationContent>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (item) => {
                       if (
                         item === 1 ||
                         item === totalPages ||
-                        Math.abs(item - page) <= 2
+                        Math.abs(page - item) <= 2 // Checks if the page number (item) is close enough to the current page (within 2 pages),
                       ) {
                         return (
                           <PaginationItem key={item}>
                             <PaginationLink
-                              className="bg-gray-500"
+                              className="bg-black"
                               isActive={item === page}
                               onClick={() => {
                                 window.scrollTo(0, 0);
@@ -155,7 +188,7 @@ const AnimeHome = () => {
                         return (
                           <PaginationEllipsis
                             key={item}
-                            className="text-white"
+                            className="text-black"
                           />
                         );
                       }
@@ -166,10 +199,9 @@ const AnimeHome = () => {
               </Pagination>
             )}
           </div>
-          <div className="lg:col-span-6">{/* <MediaPage /> */}</div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
