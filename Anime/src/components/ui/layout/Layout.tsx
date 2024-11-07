@@ -1,10 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "../navigation-menu";
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -18,18 +12,6 @@ const Layout = ({ children }) => {
           <button onClick={handleNavigate} className="text-white py-6">
             SKY.Com
           </button>
-          {/* <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger
-                  onClick={handleNavigate}
-                  className=" sm:my-1 md:my-3 flex items-center justify-center bg-slate-700 text-white  w-full"
-                >
-                  <div> SKY </div>
-                </NavigationMenuTrigger>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu> */}
         </div>
       </header>
       <main className="grow">

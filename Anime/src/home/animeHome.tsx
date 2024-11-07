@@ -45,13 +45,11 @@ const AnimeHome = () => {
     });
   };
 
-  const onClickCard = (id: number) => {
+  const onClickCard = (id: number, title: string) => {
+    const formatTitle = title.replace(/\s+/g, "-");
     setTimeout(() => {
       window.scrollTo(0, 0);
-      navigate({
-        pathname: `/home/${id}`,
-        search: `?name=${data?.Page?.media?.[0]?.title?.english}`,
-      });
+      navigate(`/home/${id}/${formatTitle}`);
     }, 500);
   };
 
@@ -67,6 +65,9 @@ const AnimeHome = () => {
               <Card
                 key={anime?.id}
                 className="w-full text-gray-400 hover:text-gray-600"
+                onClick={() =>
+                  onClickCard(anime?.id, anime?.title?.english || "")
+                }
               >
                 <div className="flex flex-col justify-center items-center mb-5 h-50 ">
                   <TooltipProvider>
@@ -82,7 +83,10 @@ const AnimeHome = () => {
                       <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
                         <div>
                           <h2 className="text-gray-800 text-lg font-semibold">
-                            {anime?.title?.english || anime?.title?.romaji}
+                            {anime?.title?.english ||
+                              anime?.title?.romaji ||
+                              anime.title?.native ||
+                              anime.title.userPreferred}
                           </h2>
 
                           {anime?.airingSchedule?.edges

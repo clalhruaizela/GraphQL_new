@@ -9,7 +9,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<AnimeHome />} />
+          <Route path="/" element={<AnimeHome />} />
           <Route path="/home/:id/:title" element={<MediaPage />} />
         </Routes>
       </BrowserRouter>
