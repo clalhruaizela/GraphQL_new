@@ -1,17 +1,39 @@
 import { graphql } from "@/gql";
 
-export const GET_ANIME_BY_ID_MEDIA_TREND = graphql(`
-  query getTrend($page: Int, $perPage: Int = 10) {
-    Page(page: $page, perPage: $perPage) {
-      pageInfo {
-        perPage
+export const GET_ANIME_MEDIA_CHAR_VOICE = graphql(`
+  query getAnimeCharactersAndVoiceActors($id: Int!) {
+    Media(id: $id, type: ANIME) {
+      bannerImage
+      coverImage {
+        large
       }
-      media(sort: TRENDING_DESC) {
-        coverImage {
-          large
-        }
-        title {
-          english
+      description
+      title {
+        romaji
+        english
+        native
+      }
+      characters {
+        edges {
+          role
+          node {
+            name {
+              full
+            }
+            image {
+              large
+              medium
+            }
+          }
+          voiceActors(language: JAPANESE) {
+            name {
+              full
+            }
+            image {
+              large
+            }
+            languageV2
+          }
         }
       }
     }
