@@ -21,21 +21,30 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
         month
         year
       }
+      source
       averageScore
       meanScore
       popularity
       favourites
       studios {
-        edges {
-          id
+        nodes {
+          name
+          isAnimationStudio
         }
       }
       hashtag
       synonyms
-
+      coverImage {
+        medium
+      }
       status
+      title {
+        english
+        native
+        romaji
+      }
       format
-      duration #€
+      duration
       genres
       season
       seasonYear

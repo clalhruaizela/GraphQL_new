@@ -6,6 +6,7 @@ export const GET_ANIME_MEDIA_CHAR_VOICE = graphql(`
       bannerImage
       coverImage {
         large
+        medium
       }
       description
       title {
