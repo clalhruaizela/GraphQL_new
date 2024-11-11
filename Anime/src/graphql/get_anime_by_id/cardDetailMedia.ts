@@ -79,6 +79,13 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
           }
         }
       }
+      recommendations {
+        edges {
+          node {
+            id
+          }
+        }
+      }
       format
       duration
       genres
