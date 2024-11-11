@@ -21,6 +21,27 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
         month
         year
       }
+      relations {
+        nodes {
+          id
+          status
+          type
+          coverImage {
+            medium
+          }
+          title {
+            romaji
+            english
+            native
+            userPreferred
+          }
+        }
+      }
+      tags {
+        id
+        name
+        rank
+      }
       source
       averageScore
       meanScore
@@ -42,6 +63,21 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
         english
         native
         romaji
+      }
+      staff {
+        edges {
+          id
+          role
+          node {
+            name {
+              full
+            }
+            image {
+              large
+              medium
+            }
+          }
+        }
       }
       format
       duration
