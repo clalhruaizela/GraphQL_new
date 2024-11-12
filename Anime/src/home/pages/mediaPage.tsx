@@ -46,20 +46,20 @@ const MediaPage = () => {
             <img
               src={data?.Media?.bannerImage || ""}
               alt={data?.Media?.title?.english || ""}
-              className="object-cover w-full h-52 md:h-96 "
+              className="object-cover w-full h-52 md:h-96 xl:h-60"
             />
           </div>
         )}
-        <div className="w-full grid  md:grid-cols-12 gap-8">
-          <div className=" relative -mt-20  md:-mt-28 md:col-span-4 lg:ml-4 lg:col-span-3">
-            <div className="grid grid-cols-8 md:flex md:flex-col w-full gap-5 items-end  static pl-6 ">
-              <p className="md:col-span-4 w-60 ">
+        <div className="w-full grid  md:grid-cols-12 gap-8 xl:">
+          <div className=" relative -mt-20  md:-mt-28 xl:-mt-14 md:col-span-4 lg:ml-4 lg:col-span-3 xl:col-span-3  ">
+            <div className="grid grid-cols-8 md:flex md:flex-col w-full gap-5 items-end  static pl-6  xl:ml-7">
+              <p className="md:col-span-4 w-60 xl:w-44">
                 {data?.Media?.coverImage?.large && (
                   <img
                     src={data?.Media?.coverImage?.large || ""}
                     className={`${
                       data?.Media?.bannerImage
-                        ? "static  md:w-full  xl:left-96 xl:top-80  lg:left-56 lg:top-48 "
+                        ? "static  md:w-full  xl:left-96 xl:top-96  lg:left-56 lg:top-48 "
                         : ""
                     }`}
                   />
@@ -75,8 +75,8 @@ const MediaPage = () => {
               </div>
             </div>
           </div>
-          <div className="mt-10 md:mt-6 hidden md:col-span-6 lg:col-span-9 md:block">
-            <div className="text-gray-600  pl-16 md:pl-0 md:px-4 lg:">
+          <div className="mt-10 md:mt-6 hidden md:col-span-6 lg:col-span-9 xl:col-span-6 lg:block xl:block md:block">
+            <div className="text-gray-600  pl-16 md:pl-0 md:px-4 lg:text-xs xl:pl-4">
               <h1 className="font-bold text-xl ">
                 {data?.Media?.title?.english || ""}
               </h1>
@@ -84,7 +84,7 @@ const MediaPage = () => {
                 className={` overflow-hidden gap-4 ${
                   isExpanded
                     ? "max-h-full"
-                    : "max-h-24 md:max-h-72 lg:max-h-60 "
+                    : "max-h-24 md:max-h-72 lg:max-h-60 xl:max-h-52"
                 } transition-all duration-300 `}
                 onClick={toggelExpand}
               >
@@ -98,9 +98,9 @@ const MediaPage = () => {
             </div>
           </div>
         </div>
-        <div className=" bg-gray-100  md:grid md:grid-cols-12 px-4   md:gap-8 mt-10  ">
-          <div className=" md:col-span-4 mx-6">
-            <div className=" mx-auto py-4 mt-4 md:mt-20 md:grid  bg-white text-black text-nowrap flex flex-row justify-center md:justify-start  overflow-x-auto  ">
+        <div className=" bg-gray-100  md:grid md:grid-cols-12 xl:grid-cols-9 px-4    md:gap-8 mt-10  ">
+          <div className=" md:col-span-4 xl:mx-0 xl:col-span-3 bg-red-200 md:mx-6">
+            <div className=" mx-auto py-4 mt-4 md:mt-20 md:grid xl:ml-32 xl:w-44 bg-white  text-black text-nowrap flex flex-row justify-center md:justify-start  overflow-x-auto  ">
               <div className="w-full  text-gray-500 font-medium items-center  flex md:flex-col md:px-4 md:gap-4 md:items-start whitespace-nowrap md:whitespace-normal text-xs ">
                 <div className=" pr-10   ">
                   <h2 className="pb-1">Airing</h2>
@@ -230,7 +230,7 @@ const MediaPage = () => {
                 </div>
               </div>
             </div>
-            <div className="my-10 md:col-span-4 ">
+            <div className="my-10 md:col-span-4  xl:w-44 xl:ml-20 xl:text-xs ">
               <h2>Tags</h2>
               <div className="pt-2">
                 {data?.Media?.tags?.map((tag) => (
@@ -245,6 +245,7 @@ const MediaPage = () => {
               </div>
             </div>
           </div>
+
           {/* </div> */}
 
           <div className="text-gray-500 mt-24 md:hidden">
@@ -265,7 +266,7 @@ const MediaPage = () => {
               </p>
             </div>
           </div>
-          <div className="md:col-span-8 md:mx-4">
+          <div className="md:col-span-8 xl:col-span-5 bg-zinc-500 md:mx-4">
             <div className="text-sm mt-12 ">
               <h2>Relations</h2>
               <div className="w-64 md:w-full pt-3">
