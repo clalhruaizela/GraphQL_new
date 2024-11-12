@@ -16,6 +16,7 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
         month
         year
       }
+      bannerImage
       endDate {
         day
         month
@@ -27,6 +28,7 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
           status
           type
           coverImage {
+            large
             medium
           }
           title {
@@ -57,6 +59,7 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
       synonyms
       coverImage {
         medium
+        large
       }
       status
       title {
@@ -79,10 +82,26 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
           }
         }
       }
+      trailer {
+        id
+        site
+        thumbnail
+      }
       recommendations {
         edges {
           node {
-            id
+            mediaRecommendation {
+              id
+              title {
+                romaji
+                english
+                native
+              }
+              coverImage {
+                large
+                medium
+              }
+            }
           }
         }
       }
@@ -90,8 +109,69 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
       duration
       genres
       season
+      description
       seasonYear
       episodes
+      characters {
+        edges {
+          role
+          node {
+            name {
+              full
+            }
+            image {
+              large
+              medium
+            }
+          }
+          voiceActors(language: JAPANESE) {
+            name {
+              full
+            }
+            image {
+              large
+            }
+            languageV2
+          }
+        }
+      }
     }
   }
+  # query getAnimeCharactersAndVoiceActors($id: Int!) {
+  #   Media(id: $id, type: ANIME) {
+  #     bannerImage
+  #     coverImage {
+  #       large
+  #       medium
+  #     }
+  #     description
+  #     title {
+  #       romaji
+  #       english
+  #       native
+  #     }
+  #     characters {
+  #       edges {
+  #         role
+  #         node {
+  #           name {
+  #             full
+  #           }
+  #           image {
+  #             large
+  #             medium
+  #           }
+  #         }
+  #         voiceActors(language: JAPANESE) {
+  #           name {
+  #             full
+  #           }
+  #           image {
+  #             large
+  #           }
+  #           languageV2
+  #         }
+  #       }
+  #     }
+  #   }
 `);
