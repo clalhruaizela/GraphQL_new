@@ -308,7 +308,7 @@ const MediaPage = () => {
                         )
                       }
                     >
-                      <div className="flex flex-row lg:w-full w-72  xl:flex-col xl:w-36">
+                      <div className="flex flex-row lg:w-full w-72   xl:flex-col xl:w-36  ">
                         <img
                           src={relation?.coverImage?.medium || ""}
                           alt={relation?.title?.english || ""}
@@ -364,8 +364,8 @@ const MediaPage = () => {
                           </div>
                           {anime!.voiceActors!.length > 0 && (
                             <div className=" flex  ">
-                              <div className=" flex flex-col justify-between pr-2 py-2">
-                                <h3>{anime!.voiceActors![0]!.name!.full}</h3>
+                              <div className=" flex text-right flex-col justify-between pr-2  py-2">
+                                <p>{anime!.voiceActors![0]!.name!.full}</p>
                                 <p className=" text-gray-500 justify-end flex">
                                   {anime!.voiceActors![0]!.languageV2}
                                 </p>
@@ -439,7 +439,7 @@ const MediaPage = () => {
                 <div className="md:col-span-10">
                   <div>
                     <h2>Recommendations</h2>
-                    <div className="whitespace-nowrap justify-between   grid grid-flow-col   overflow-x-scroll gap-8  pt-2">
+                    <div className=" justify-between   grid grid-flow-col   overflow-x-scroll gap-8  pt-2">
                       {data?.Media?.recommendations?.edges?.map(
                         (recommendation) => (
                           <div
@@ -452,7 +452,7 @@ const MediaPage = () => {
                               )
                             }
                           >
-                            <div className="flex flex-col w-36 py-2 ">
+                            <div className="flex flex-col w-36  py-2 ">
                               <img
                                 src={
                                   recommendation?.node?.mediaRecommendation
@@ -464,15 +464,16 @@ const MediaPage = () => {
                                 }
                                 className="w-40 h-44 rounded-sm shadow-lg"
                               />
-
-                              <p className=" text-sm pt-2  w-40  overflow-scroll ">
-                                {recommendation?.node?.mediaRecommendation
-                                  ?.title?.english ||
-                                  recommendation?.node?.mediaRecommendation
-                                    ?.title?.native ||
-                                  recommendation?.node?.mediaRecommendation
-                                    ?.title?.romaji}
-                              </p>
+                              <div>
+                                <div className=" flex items-center justify-center pt-2  w-36 text-xs   ">
+                                  {recommendation?.node?.mediaRecommendation
+                                    ?.title?.english ||
+                                    recommendation?.node?.mediaRecommendation
+                                      ?.title?.native ||
+                                    recommendation?.node?.mediaRecommendation
+                                      ?.title?.romaji}
+                                </div>{" "}
+                              </div>
                             </div>
                           </div>
                         )
@@ -484,24 +485,71 @@ const MediaPage = () => {
             </TabsContent>
             <TabsContent
               value="Characters"
-              className="md:col-span-8 xl:col-span-6"
+              className="md:col-span-8 mt-12 xl:col-span-6"
             >
               <div className="col-span-6 grid  xl:grid-cols-3 pt-2 gap-2 xl:gap-10">
-                {data?.Media?.characters?.edges?.map((character, index) => (
-                  <Card key={index}>
-                    <div>
+                {data?.Media?.characters?.edges?.map((anime, index) => (
+                  <Card key={index} className=" text-xs flex justify-between ">
+                    <div className="flex">
                       <img
-                        src={character?.node?.image?.large || ""}
-                        alt={character?.node?.name?.full || ""}
-                        className="w-16 h-20 rounded-l-sm"
+                        src={anime?.node?.image?.large || ""}
+                        alt={anime?.node?.name?.full || ""}
+                        className="w-16 rounded-l-sm "
                       />
-                      <div className="flex flex-col gap-6 pl-2 pt-4 text-xs">
-                        <p>{character?.node?.name?.full}</p>
-                        <p>{character?.role}</p>
+                      <div className="justify-between py-2 pl-2 flex flex-col">
+                        <p>{anime?.node?.name?.full || ""}</p>
+                        <p> {anime?.role} </p>
                       </div>
                     </div>
+                    {anime!.voiceActors!.length > 0 && (
+                      <div className=" flex  ">
+                        <div className=" flex flex-col justify-between text-right pr-2 py-2">
+                          <h3>{anime!.voiceActors![0]!.name!.full}</h3>
+                          <p className=" text-gray-500 justify-end flex">
+                            {anime!.voiceActors![0]!.languageV2}
+                          </p>
+                        </div>
+                        <img
+                          src={anime!.voiceActors![0]!.image!.large || ""}
+                          alt={anime!.voiceActors![0]!.name!.full || ""}
+                          className="w-16 rounded-r-sm"
+                        />
+                      </div>
+                    )}
                   </Card>
                 ))}
+              </div>
+            </TabsContent>
+            <TabsContent
+              value="Staff"
+              className="my-10 md:col-span-8 xl:col-span-6"
+            >
+              <div className="grid grid-cols-9 gap-2 pt-2 xl:gap-10">
+                {data?.Media?.staff?.edges &&
+                  Array.from(
+                    new Map(
+                      data.Media.staff.edges.map((staff) => [
+                        staff?.node?.name?.full,
+                        staff,
+                      ])
+                    ).values()
+                  ).map((staff, index) => {
+                    return (
+                      <Card key={index} className="col-span-9 xl:col-span-3">
+                        <div className="flex">
+                          <img
+                            src={staff?.node?.image?.medium || ""}
+                            alt={staff?.node?.name?.full || ""}
+                            className="w-16 h-20 rounded-l-sm"
+                          />
+                          <div className="flex flex-col gap-6 pl-2 pt-4 text-xs ">
+                            <p>{staff?.node?.name?.full}</p>
+                            <p>{staff?.role}</p>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
               </div>
             </TabsContent>
           </div>
