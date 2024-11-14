@@ -1,18 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import Navbar from "./StickyNav/Navbar";
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
+
   const handleNavigate = () => {
     navigate("/");
   };
   return (
     <div className="min-h-screen flex flex-col ">
-      <header className="flex justify-center">
-        <div className="flex justify-center w-full bg-slate-700">
-          <button onClick={handleNavigate} className="text-white py-6">
-            SKY.Com
-          </button>
-        </div>
+      <header className="z-50" onClick={handleNavigate}>
+        <Navbar />
       </header>
       <main className="grow">
         {/* <Outlet /> */}
