@@ -20,10 +20,13 @@ import { formatTimeUntilAiring } from "./utilties/formatTimeUntilAiring";
 import { SmileOutlined } from "@ant-design/icons";
 import Layout from "@/components/ui/layout/Layout";
 import { Skeletons } from "./utilties/skeletion";
+import { useState } from "react";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
+  const [search, setSearch] = useState<string>("");
+  const [submit, setSubmit] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const { isLoading, isError, data } = useQuery({
@@ -31,7 +34,7 @@ const AnimeHome = () => {
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
         page,
-        perPage: 30,
+        perPage: 50,
         lastPage: 10,
       });
     },
@@ -46,6 +49,9 @@ const AnimeHome = () => {
     });
   };
 
+  const handleSearchSubmit = () => {
+    setSubmit(search);
+  };
   const onClickCard = (id: number, title: string) => {
     const formatTitle = title.replace(/\s+/g, "-");
     setTimeout(() => {
@@ -60,6 +66,12 @@ const AnimeHome = () => {
   return (
     <Layout>
       <div className="w-full min-h-screen py-6 pt-32 bg-[#e4ebf0]">
+        <div>
+          <div>
+            <input type="text" value={search} className="text-black py-1" />
+            <button onClick={handleSearchSubmit}></button>
+          </div>
+        </div>
         <div className="grid grid-cols-6 xl:w-10/12 2xl:w-9/12  mx-auto">
           <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 gap-4">
             {isLoading ? (
