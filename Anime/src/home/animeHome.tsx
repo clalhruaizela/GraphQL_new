@@ -20,26 +20,26 @@ import { formatTimeUntilAiring } from "./utilties/formatTimeUntilAiring";
 import { SmileOutlined } from "@ant-design/icons";
 import Layout from "@/components/ui/layout/Layout";
 import { Skeletons } from "./utilties/skeletion";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
   const [search, setSearch] = useState<string>("");
-  const [submit, setSubmit] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const { isLoading, isError, data } = useQuery({
     queryKey: ["anime", page],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
+        search,
         page,
         perPage: 50,
-        lastPage: 10,
+        // lastPage: 10,
       });
     },
     placeholderData: keepPreviousData,
-    enabled: !!searchParams,
+    enabled: !!search || !!searchParams,
   });
 
   const handlePageChange = (page: number) => {
@@ -49,8 +49,8 @@ const AnimeHome = () => {
     });
   };
 
-  const handleSearchSubmit = () => {
-    setSubmit(search);
+  const handleSearchSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch();
   };
   const onClickCard = (id: number, title: string) => {
     const formatTitle = title.replace(/\s+/g, "-");

@@ -1,17 +1,23 @@
 import { graphql } from "../../gql";
 
 const GET_ANIME_BY_ID = graphql(`
-  query getAnimeId($page: Int, $perPage: Int, $format: MediaFormat) {
+  query getAnimeId(
+    $search: String!
+    $page: Int
+    $perPage: Int
+    $format: MediaFormat
+  ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
         total
         perPage
-        currentPage
-        lastPage
-        hasNextPage
+        # currentPage
+        # lastPage
+        # hasNextPage
       }
 
       media(
+        search: $search
         type: ANIME
         format: $format
         sort: TRENDING_DESC
