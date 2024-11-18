@@ -15,6 +15,8 @@ import { SmileOutlined } from "@ant-design/icons";
 import { GET_SEARCH_ANIME } from "@/graphql/search/animeSearch";
 import Layout from "@/components/ui/layout/Layout";
 import { useState } from "react";
+import AnimeGrid from "../AnimeGrid";
+import { useDebounce } from "../utilties/debounce";
 
 const AnimeSearch = () => {
   const graphql = graphqlClient();
@@ -22,15 +24,17 @@ const AnimeSearch = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchParams] = useSearchParams();
   const search = searchParams.get("name") || "";
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["searchAnime", search],
+    queryKey: ["searchAnime", search, debouncedSearchTerm],
     queryFn: async () => {
       return await graphql.request(GET_SEARCH_ANIME, {
         search: search,
       });
     },
     placeholderData: keepPreviousData,
-    enabled: !!searchParams,
+    enabled: !!search || !!searchParams || !!debouncedSearchTerm,
   });
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +74,13 @@ const AnimeSearch = () => {
           </div>
         </div>
         <div className="grid grid-cols-6 xl:w-10/12 2xl:w-9/12  mx-auto">
-          <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 gap-4">
+          <AnimeGrid
+            data={data?.Page?.media}
+            isLoading={isLoading}
+            onCardClick={onClickCard}
+            formatTimeUntilAiring={formatTimeUntilAiring}
+          />
+          {/* <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 gap-4">
             {isLoading ? (
               <Skeletons amount={30} className="h-72 col-span-1" />
             ) : (
@@ -184,7 +194,7 @@ const AnimeSearch = () => {
                 )}
               </>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </Layout>

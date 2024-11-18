@@ -6,27 +6,30 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+// import {
+//   Tooltip,
+//   TooltipContent,
+//   TooltipProvider,
+//   TooltipTrigger,
+// } from "@/components/ui/tooltip";
 import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
 import graphqlClient from "@/graphql/getGraphqlClient";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { formatTimeUntilAiring } from "./utilties/formatTimeUntilAiring";
-import { SmileOutlined } from "@ant-design/icons";
+// import { SmileOutlined } from "@ant-design/icons";
 import Layout from "@/components/ui/layout/Layout";
-import { Skeletons } from "./utilties/skeletion";
-import React, { useState } from "react";
+// import { Skeletons } from "./utilties/skeletion";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import AnimeGrid from "./AnimeGrid";
+import { useDebounce } from "./utilties/debounce";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
 
@@ -43,13 +46,6 @@ const AnimeHome = () => {
     enabled: !!searchParams,
   });
 
-  const handlePageChange = (page: number) => {
-    setSearchParams((param) => {
-      param.set("page", page.toString());
-      return param;
-    });
-  };
-
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     navigate({
@@ -57,6 +53,13 @@ const AnimeHome = () => {
       search: `?name=${searchTerm}`,
     });
   };
+  const handlePageChange = (page: number) => {
+    setSearchParams((param) => {
+      param.set("page", page.toString());
+      return param;
+    });
+  };
+
   const onClickCard = (id: number, title: string) => {
     const formatTitle = title.replace(/\s+/g, "-");
     setTimeout(() => {
@@ -66,6 +69,15 @@ const AnimeHome = () => {
   };
 
   const totalPages = Math.min(data?.Page?.pageInfo?.total || 1, 10);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
 
   if (isError) return <div>Error</div>;
   return (
@@ -77,7 +89,7 @@ const AnimeHome = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="text-black py-1 px-2 "
+              className="text-black py-1 pl-2 pr-6 "
             />
             {searchTerm && ( // Only show the clear button when there is input
               <button
@@ -97,119 +109,12 @@ const AnimeHome = () => {
           </div>
         </div>
         <div className="grid grid-cols-6 xl:w-10/12 2xl:w-9/12  mx-auto">
-          <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 gap-4">
-            {isLoading ? (
-              <Skeletons amount={30} className="h-72 col-span-1" />
-            ) : (
-              <>
-                {data?.Page?.media?.map((anime) => (
-                  <Card
-                    key={anime?.id}
-                    className="w-full text-gray-400 hover:text-gray-600"
-                    onClick={() => {
-                      if (anime)
-                        onClickCard(anime?.id, anime?.title?.english || "");
-                    }}
-                  >
-                    <div className="flex flex-col justify-center items-center mb-5 h-53 ">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger
-                            asChild
-                            className="aspect-ratio-1/1 h-40 w-32 md:h-48 xl:w-56 xl:h-60 2xl:w-52 2xl:h-72"
-                          >
-                            <img
-                              src={anime?.coverImage?.large || ""}
-                              alt={anime?.title?.english || ""}
-                              width="70%"
-                              height="70%"
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
-                            <div>
-                              <h2 className="text-gray-800 text-lg font-semibold">
-                                {anime?.title?.english ||
-                                  anime?.title?.romaji ||
-                                  anime?.title?.native}
-                              </h2>
-
-                              {anime?.airingSchedule?.edges
-                                ?.filter(
-                                  (edge) =>
-                                    (edge?.node?.timeUntilAiring ?? 0) > 0
-                                )
-                                .slice(0, 1)
-                                .map((edge, index: number) => (
-                                  <div
-                                    key={index}
-                                    className="flex py-2 gap-2 font-bold items-center"
-                                  >
-                                    <span className="text-lg font-semibold">
-                                      Ep {edge?.node?.episode}
-                                    </span>
-                                    <span className="text-base text-gray-600">
-                                      airing in{" "}
-                                      {formatTimeUntilAiring(
-                                        edge?.node?.timeUntilAiring ?? 0
-                                      )}{" "}
-                                      remaining
-                                    </span>
-                                  </div>
-                                ))}
-                              <div className=" flex flex-row gap-1 ">
-                                <p className="text-green-400 text-lg">
-                                  <SmileOutlined />
-                                </p>
-                                <p className="font-bold pt-1">
-                                  {anime?.averageScore}%
-                                </p>
-                              </div>
-                              <div className="flex flex-row gap-2  text-gray-500">
-                                <p> {anime?.season} </p>
-                                <p> {anime?.seasonYear} </p>
-                              </div>
-                              <div className="flex flex-row gap-2 pb-2 text-gray-500">
-                                <p> {anime?.format} Show </p>
-                                <p> {anime?.episodes} episodes </p>
-                              </div>
-                              <div className="flex flex-row gap-2 flex-wrap  pt-2">
-                                {anime?.genres
-                                  ?.slice(0, 3)
-                                  .map((genre, index) => (
-                                    <div
-                                      key={index}
-                                      className={`  py-1 text-xs font-semibold rounded-xl text-center  ${
-                                        genre === "Comedy"
-                                          ? "bg-red-500 text-white w-20"
-                                          : "bg-red-500 text-white w-20"
-                                      }`}
-                                    >
-                                      {" "}
-                                      {genre}{" "}
-                                    </div>
-                                  ))}
-                              </div>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <CardContent className="p-0">
-                      <div className="text-xs  2xl:w-full md:text-sm md:font-semibold lg:font-bold   flex flex-col   items-center w-full h-8 md:w-full  md:h-10 overflow-hidden lg:w-48 pl-1   ">
-                        <h1 className="">
-                          {anime?.title?.english ||
-                            anime?.title?.romaji ||
-                            anime?.title?.native ||
-                            anime?.title?.userPreferred}
-                        </h1>
-                        {/* <p>{anime?.description}</p> */}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </>
-            )}
-          </div>
+          <AnimeGrid
+            data={data?.Page?.media}
+            isLoading={isLoading}
+            onCardClick={onClickCard}
+            formatTimeUntilAiring={formatTimeUntilAiring}
+          />
           <div className=" col-span-6 text-white">
             {totalPages > 1 && (
               <Pagination className="py-5 w-24 border-t-2 md:py-10 ">
