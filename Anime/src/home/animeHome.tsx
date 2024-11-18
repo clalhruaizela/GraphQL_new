@@ -21,25 +21,26 @@ import { SmileOutlined } from "@ant-design/icons";
 import Layout from "@/components/ui/layout/Layout";
 import { Skeletons } from "./utilties/skeletion";
 import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
-  const [search, setSearch] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
+
   const { isLoading, isError, data } = useQuery({
     queryKey: ["anime", page],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
-        search,
         page,
         perPage: 50,
-        // lastPage: 10,
+        lastPage: 10,
       });
     },
     placeholderData: keepPreviousData,
-    enabled: !!search || !!searchParams,
+    enabled: !!searchParams,
   });
 
   const handlePageChange = (page: number) => {
@@ -49,8 +50,12 @@ const AnimeHome = () => {
     });
   };
 
-  const handleSearchSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch();
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate({
+      pathname: "/search",
+      search: `?name=${searchTerm}`,
+    });
   };
   const onClickCard = (id: number, title: string) => {
     const formatTitle = title.replace(/\s+/g, "-");
@@ -66,10 +71,29 @@ const AnimeHome = () => {
   return (
     <Layout>
       <div className="w-full min-h-screen py-6 pt-32 bg-[#e4ebf0]">
-        <div>
+        <div className="flex justify-center items-center  pb-10">
           <div>
-            <input type="text" value={search} className="text-black py-1" />
-            <button onClick={handleSearchSubmit}></button>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="text-black py-1 px-2 "
+            />
+            {searchTerm && ( // Only show the clear button when there is input
+              <button
+                onClick={() => setSearchTerm("")} // Clears the input field
+                className="text-black -ml-5 mr-2"
+              >
+                X
+              </button>
+            )}
+            <Button
+              variant={"destructive"}
+              type="submit"
+              onClick={handleSearchSubmit}
+            >
+              search
+            </Button>
           </div>
         </div>
         <div className="grid grid-cols-6 xl:w-10/12 2xl:w-9/12  mx-auto">
@@ -78,13 +102,14 @@ const AnimeHome = () => {
               <Skeletons amount={30} className="h-72 col-span-1" />
             ) : (
               <>
-                {data?.Page?.media?.map((anime: any) => (
+                {data?.Page?.media?.map((anime) => (
                   <Card
                     key={anime?.id}
                     className="w-full text-gray-400 hover:text-gray-600"
-                    onClick={() =>
-                      onClickCard(anime?.id, anime?.title?.english || "")
-                    }
+                    onClick={() => {
+                      if (anime)
+                        onClickCard(anime?.id, anime?.title?.english || "");
+                    }}
                   >
                     <div className="flex flex-col justify-center items-center mb-5 h-53 ">
                       <TooltipProvider>
@@ -94,8 +119,8 @@ const AnimeHome = () => {
                             className="aspect-ratio-1/1 h-40 w-32 md:h-48 xl:w-56 xl:h-60 2xl:w-52 2xl:h-72"
                           >
                             <img
-                              src={anime?.coverImage?.large}
-                              alt={anime?.title?.english}
+                              src={anime?.coverImage?.large || ""}
+                              alt={anime?.title?.english || ""}
                               width="70%"
                               height="70%"
                             />
@@ -105,27 +130,27 @@ const AnimeHome = () => {
                               <h2 className="text-gray-800 text-lg font-semibold">
                                 {anime?.title?.english ||
                                   anime?.title?.romaji ||
-                                  anime.title?.native ||
-                                  anime.title.userPreferred}
+                                  anime?.title?.native}
                               </h2>
 
                               {anime?.airingSchedule?.edges
                                 ?.filter(
-                                  (edge: any) => edge.node.timeUntilAiring > 0
+                                  (edge) =>
+                                    (edge?.node?.timeUntilAiring ?? 0) > 0
                                 )
                                 .slice(0, 1)
-                                .map((edge: any, index: number) => (
+                                .map((edge, index: number) => (
                                   <div
                                     key={index}
                                     className="flex py-2 gap-2 font-bold items-center"
                                   >
                                     <span className="text-lg font-semibold">
-                                      Ep {edge.node?.episode}
+                                      Ep {edge?.node?.episode}
                                     </span>
                                     <span className="text-base text-gray-600">
                                       airing in{" "}
                                       {formatTimeUntilAiring(
-                                        edge.node?.timeUntilAiring
+                                        edge?.node?.timeUntilAiring ?? 0
                                       )}{" "}
                                       remaining
                                     </span>
@@ -136,11 +161,11 @@ const AnimeHome = () => {
                                   <SmileOutlined />
                                 </p>
                                 <p className="font-bold pt-1">
-                                  {anime.averageScore}%
+                                  {anime?.averageScore}%
                                 </p>
                               </div>
                               <div className="flex flex-row gap-2  text-gray-500">
-                                <p> {anime.season} </p>
+                                <p> {anime?.season} </p>
                                 <p> {anime?.seasonYear} </p>
                               </div>
                               <div className="flex flex-row gap-2 pb-2 text-gray-500">
@@ -148,9 +173,9 @@ const AnimeHome = () => {
                                 <p> {anime?.episodes} episodes </p>
                               </div>
                               <div className="flex flex-row gap-2 flex-wrap  pt-2">
-                                {anime.genres
+                                {anime?.genres
                                   ?.slice(0, 3)
-                                  .map((genre: string, index: number) => (
+                                  .map((genre, index) => (
                                     <div
                                       key={index}
                                       className={`  py-1 text-xs font-semibold rounded-xl text-center  ${
@@ -175,7 +200,7 @@ const AnimeHome = () => {
                           {anime?.title?.english ||
                             anime?.title?.romaji ||
                             anime?.title?.native ||
-                            anime.title?.userPreferred}
+                            anime?.title?.userPreferred}
                         </h1>
                         {/* <p>{anime?.description}</p> */}
                       </div>

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AnimeHome from "./home/animeHome";
 import MediaPage from "./home/pages/mediaPage";
+import AnimeSearch from "./home/pages/AnimeSearch";
 
 const queryClient = new QueryClient();
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AnimeHome />} />
+          <Route path="/search" element={<AnimeSearch />} />
           <Route path="/home/:id/:title" element={<MediaPage />} />
         </Routes>
       </BrowserRouter>
