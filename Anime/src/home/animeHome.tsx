@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -6,32 +5,33 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-// import {
-//   Tooltip,
-//   TooltipContent,
-//   TooltipProvider,
-//   TooltipTrigger,
-// } from "@/components/ui/tooltip";
 import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
 import graphqlClient from "@/graphql/getGraphqlClient";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { formatTimeUntilAiring } from "./utilties/formatTimeUntilAiring";
-// import { SmileOutlined } from "@ant-design/icons";
 import Layout from "@/components/ui/layout/Layout";
-// import { Skeletons } from "./utilties/skeletion";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import AnimeGrid from "./AnimeGrid";
 import { useDebounce } from "./utilties/debounce";
+import FilterGenre from "./utilties/filterGenre";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Genre } from "./utilties/genre/genre";
+import { GET_FILTERED_GENRES } from "@/graphql/search/filterGenre";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+  const [debouncedValue] = useDebounce(searchTerm, 500);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
+  const genre = searchParams.get("genre") || "";
 
   const { isLoading, isError, data } = useQuery({
     queryKey: ["anime", page],
@@ -40,19 +40,22 @@ const AnimeHome = () => {
         page,
         perPage: 50,
         lastPage: 10,
+        search: debouncedValue,
       });
     },
     placeholderData: keepPreviousData,
     enabled: !!searchParams,
   });
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigate({
-      pathname: "/search",
-      search: `?name=${searchTerm}`,
-    });
-  };
+  const { isError: isError2, data: data2 } = useQuery({
+    queryKey: [],
+    queryFn: async () => {
+      return await graphql.request(GET_FILTERED_GENRES, {
+        genre: genre,
+      });
+    },
+  });
+
   const handlePageChange = (page: number) => {
     setSearchParams((param) => {
       param.set("page", page.toString());
@@ -60,6 +63,22 @@ const AnimeHome = () => {
     });
   };
 
+  const handleFilterClick = () => {
+    navigate({
+      pathname: "/genre",
+      search: `?genre=${searchTerm}`,
+    });
+  };
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) {
+      return;
+    }
+    navigate({
+      pathname: "/search",
+      search: `?search=${searchTerm}`,
+    });
+  };
   const onClickCard = (id: number, title: string) => {
     const formatTitle = title.replace(/\s+/g, "-");
     setTimeout(() => {
@@ -70,16 +89,7 @@ const AnimeHome = () => {
 
   const totalPages = Math.min(data?.Page?.pageInfo?.total || 1, 10);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm]);
-
-  if (isError) return <div>Error</div>;
+  if (isError || isError2) return <div>Error</div>;
   return (
     <Layout>
       <div className="w-full min-h-screen py-6 pt-32 bg-[#e4ebf0]">
@@ -89,12 +99,12 @@ const AnimeHome = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="text-black py-1 pl-2 pr-6 "
+              className="text-black py-1 px-2 "
             />
             {searchTerm && ( // Only show the clear button when there is input
               <button
                 onClick={() => setSearchTerm("")} // Clears the input field
-                className="text-black -ml-5 mr-2"
+                className="text-black -ml-5 mr-2 text-sm"
               >
                 X
               </button>
@@ -107,8 +117,27 @@ const AnimeHome = () => {
               search
             </Button>
           </div>
+          <div>
+            <Popover>
+              <PopoverTrigger>filter</PopoverTrigger>
+              <PopoverContent>
+                <div>
+                  {Genre.map((genre) => (
+                    <div key={genre} className="mb-2">
+                      <Button onClick={() => handleFilterClick(genre)}>
+                        {genre}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
         <div className="grid grid-cols-6 xl:w-10/12 2xl:w-9/12  mx-auto">
+          <h2 className="text-lg font-semibold text-gray-600 py-4 pl-6 ">
+            TRENDING NOW
+          </h2>
           <AnimeGrid
             data={data?.Page?.media}
             isLoading={isLoading}
