@@ -7,24 +7,23 @@ const GET_ANIME_BY_ID = graphql(`
     $page: Int
     $perPage: Int
     $format: MediaFormat
+    $genres: [String]
+    $isAdult: Boolean = false
+    $sort: [MediaSort] = [POPULARITY_DESC, SCORE_DESC, TRENDING_DESC]
   ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
-        total
-        perPage
-        currentPage
-        lastPage
         hasNextPage
       }
-
       media(
         id: $id
         search: $search
         type: ANIME
         format: $format
-        sort: TRENDING_DESC
+        sort: $sort
         status: RELEASING
-        isAdult: false
+        isAdult: $isAdult
+        genre_in: $genres
       ) {
         id
         coverImage {

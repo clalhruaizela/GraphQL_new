@@ -47,15 +47,6 @@ const AnimeHome = () => {
     enabled: !!searchParams,
   });
 
-  const { isError: isError2, data: data2 } = useQuery({
-    queryKey: [],
-    queryFn: async () => {
-      return await graphql.request(GET_FILTERED_GENRES, {
-        genre: genre,
-      });
-    },
-  });
-
   const handlePageChange = (page: number) => {
     setSearchParams((param) => {
       param.set("page", page.toString());
@@ -89,7 +80,7 @@ const AnimeHome = () => {
 
   const totalPages = Math.min(data?.Page?.pageInfo?.total || 1, 10);
 
-  if (isError || isError2) return <div>Error</div>;
+  if (isError) return <div>Error</div>;
   return (
     <Layout>
       <div className="w-full min-h-screen py-6 pt-32 bg-[#e4ebf0]">
