@@ -18,7 +18,7 @@ const AnimeSearch = () => {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("name") || "";
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { isLoading, isError, data } = useQuery({
     queryKey: ["searchAnime", search, debouncedSearchTerm],
     queryFn: async () => {

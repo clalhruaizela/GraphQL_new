@@ -1,7 +1,5 @@
 import React from "react";
-// Assuming you have a Skeletons component
-// Replace with your Card components
-import { SmileOutlined } from "@ant-design/icons"; // Replace with your icon imports
+import { SmileOutlined } from "@ant-design/icons";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {

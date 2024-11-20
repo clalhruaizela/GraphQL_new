@@ -4,10 +4,10 @@ import graphqlClient from "@/graphql/getGraphqlClient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { formatTimeUntilAiring } from "../utilties/reUse/formatTimeUntilAiring";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Layout from "@/components/ui/layout/Layout";
+import { formatTimeUntilAiring } from "@/home/utilties/reUse/formatTimeUntilAiring";
 
 const MediaPage = () => {
   const graphql = graphqlClient();
@@ -131,10 +131,10 @@ const MediaPage = () => {
                       <h2 className="pb-1">Airing</h2>
                       {data?.Media?.airingSchedule?.edges
                         ?.filter(
-                          (anime: any) => anime?.node?.timeUntilAiring > 0
+                          (anime) => (anime?.node?.timeUntilAiring ?? 0) > 0
                         )
                         .slice(0, 1)
-                        .map((anime: any, index: number) => (
+                        .map((anime, index) => (
                           <div key={index} className=" text-blue-600 ">
                             <span>
                               <>Ep</>
@@ -142,7 +142,7 @@ const MediaPage = () => {
                             </span>
                             <span>
                               {formatTimeUntilAiring(
-                                anime?.node?.timeUntilAiring
+                                anime?.node?.timeUntilAiring ?? 0
                               )}
                             </span>
                           </div>

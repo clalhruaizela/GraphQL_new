@@ -22,25 +22,25 @@ import {
 import { useDebounce } from "./utilties/debounce";
 import { MenuUnfoldOutlined } from "@ant-design/icons";
 import { MediaSort } from "@/gql/graphql";
+import AnimeTrending from "./pages/animeTrending";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [debouncedValue] = useDebounce(searchTerm, 500);
+  const [debouncedValue] = useDebounce(searchTerm, 300);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const genre = searchParams.get("genre")?.split(",") || [];
-  console.log("genre", genre);
+  // console.log("genre", genre);
 
   const { isLoading, isError, data } = useQuery({
     queryKey: ["anime", page, genre],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
         page,
-        perPage: 50,
-        lastPage: 10,
+        perPage: 6,
         sort: [MediaSort.PopularityDesc, MediaSort.TrendingDesc],
         search: debouncedValue,
         genres: genre.length ? genre : undefined,
@@ -49,6 +49,20 @@ const AnimeHome = () => {
     placeholderData: keepPreviousData,
     enabled: !!searchParams,
   });
+
+  const handleTrendingClick = () => {
+    navigate({
+      pathname: "/trending",
+      search: `?trending=${searchTerm}`,
+    });
+  };
+  const handlePopularityClick = () => {
+    navigate({
+      pathname: "/popularity",
+      search: `?popularity=${searchTerm}`,
+    });
+  };
+
   const handleFilterClick = (selectedGenre: string) => {
     const updatedGenres = selectedGenres.includes(selectedGenre)
       ? selectedGenres.filter((genre) => genre !== selectedGenre) // Remove genre
@@ -60,12 +74,6 @@ const AnimeHome = () => {
     if (updatedGenres.length === 0) {
       navigate("/");
     }
-  };
-  const handlePageChange = (page: number) => {
-    setSearchParams((param) => {
-      param.set("page", page.toString());
-      return param;
-    });
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -86,6 +94,12 @@ const AnimeHome = () => {
     }, 500);
   };
 
+  const handlePageChange = (page: number) => {
+    setSearchParams((param) => {
+      param.set("page", page.toString());
+      return param;
+    });
+  };
   const totalPages = Math.min(data?.Page?.pageInfo?.total || 1, 10);
 
   if (isError) return <div>Error</div>;
@@ -161,13 +175,14 @@ const AnimeHome = () => {
           <h2 className="text-lg font-semibold text-gray-600 py-4 pl-6 ">
             TRENDING NOW
           </h2>
+          <div></div>
           <AnimeGrid
             data={data?.Page?.media}
             isLoading={isLoading}
             onCardClick={onClickCard}
             formatTimeUntilAiring={formatTimeUntilAiring}
           />
-          <div className=" col-span-6 text-white">
+          {/* <div className=" col-span-6 text-white">
             {totalPages > 1 && (
               <Pagination className="py-5 w-24 border-t-2 md:py-10 ">
                 <PaginationContent>
@@ -206,7 +221,7 @@ const AnimeHome = () => {
                 </PaginationContent>
               </Pagination>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </Layout>
