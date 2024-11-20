@@ -9,44 +9,58 @@ import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
 import graphqlClient from "@/graphql/getGraphqlClient";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { formatTimeUntilAiring } from "./utilties/formatTimeUntilAiring";
+import { formatTimeUntilAiring } from "./utilties/reUse/formatTimeUntilAiring";
 import Layout from "@/components/ui/layout/Layout";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import AnimeGrid from "./AnimeGrid";
-import { useDebounce } from "./utilties/debounce";
-import FilterGenre from "./utilties/filterGenre";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Genre } from "./utilties/genre/genre";
-import { GET_FILTERED_GENRES } from "@/graphql/search/filterGenre";
+import { useDebounce } from "./utilties/debounce";
+import { MenuUnfoldOutlined } from "@ant-design/icons";
+import { MediaSort } from "@/gql/graphql";
 
 const AnimeHome = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [debouncedValue] = useDebounce(searchTerm, 500);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
-  const genre = searchParams.get("genre") || "";
+  const genre = searchParams.get("genre")?.split(",") || [];
+  console.log("genre", genre);
 
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["anime", page],
+    queryKey: ["anime", page, genre],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
         page,
         perPage: 50,
         lastPage: 10,
+        sort: [MediaSort.PopularityDesc, MediaSort.TrendingDesc],
         search: debouncedValue,
+        genres: genre.length ? genre : undefined,
       });
     },
     placeholderData: keepPreviousData,
     enabled: !!searchParams,
   });
+  const handleFilterClick = (selectedGenre: string) => {
+    const updatedGenres = selectedGenres.includes(selectedGenre)
+      ? selectedGenres.filter((genre) => genre !== selectedGenre) // Remove genre
+      : [...selectedGenres, selectedGenre]; // Add genre
 
+    setSelectedGenres(updatedGenres);
+    setSearchParams({ genre: updatedGenres.join(","), page: page.toString() });
+
+    if (updatedGenres.length === 0) {
+      navigate("/");
+    }
+  };
   const handlePageChange = (page: number) => {
     setSearchParams((param) => {
       param.set("page", page.toString());
@@ -54,12 +68,6 @@ const AnimeHome = () => {
     });
   };
 
-  const handleFilterClick = () => {
-    navigate({
-      pathname: "/genre",
-      search: `?genre=${searchTerm}`,
-    });
-  };
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm.trim()) {
@@ -110,16 +118,40 @@ const AnimeHome = () => {
           </div>
           <div>
             <Popover>
-              <PopoverTrigger>filter</PopoverTrigger>
-              <PopoverContent>
-                <div>
-                  {Genre.map((genre) => (
-                    <div key={genre} className="mb-2">
-                      <Button onClick={() => handleFilterClick(genre)}>
-                        {genre}
-                      </Button>
+              <PopoverTrigger className="text-3xl  ml-2">
+                <MenuUnfoldOutlined />{" "}
+              </PopoverTrigger>
+              <PopoverContent className="">
+                <div className="grid grid-cols-8 gap-1  ">
+                  <div className="col-span-8 ">
+                    <h2>Genres</h2>
+                    <div className="grid grid-cols-8">
+                      {Array.from(
+                        new Set(
+                          data?.Page?.media
+                            ?.flatMap((anime) => anime?.genres)
+                            .filter(
+                              (genre, index, genres) =>
+                                genres.indexOf(genre) === index
+                            )
+                            .map((genre, index) => (
+                              <div key={index} className="mb-2 col-span-1">
+                                <Button
+                                  onClick={() => handleFilterClick(genre!)}
+                                  className={`px-3 py-1 rounded ${
+                                    selectedGenres.includes(genre!)
+                                      ? "bg-blue-500 text-white"
+                                      : "bg-gray-600"
+                                  }`}
+                                >
+                                  {genre}
+                                </Button>
+                              </div>
+                            ))
+                        )
+                      )}
                     </div>
-                  ))}
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>

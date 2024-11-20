@@ -3,7 +3,7 @@ import graphqlClient from "@/graphql/getGraphqlClient";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { formatTimeUntilAiring } from "../utilties/formatTimeUntilAiring";
+import { formatTimeUntilAiring } from "../utilties/reUse/formatTimeUntilAiring";
 
 import { GET_SEARCH_ANIME } from "@/graphql/search/animeSearch";
 import Layout from "@/components/ui/layout/Layout";

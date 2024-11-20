@@ -2,7 +2,7 @@ import React from "react";
 // Assuming you have a Skeletons component
 // Replace with your Card components
 import { SmileOutlined } from "@ant-design/icons"; // Replace with your icon imports
-import { Skeletons } from "./utilties/skeletion";
+
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Tooltip,
@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Skeletons } from "./utilties/skeletion";
 
 interface Anime {
   id: number;

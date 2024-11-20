@@ -9,11 +9,12 @@ const GET_ANIME_BY_ID = graphql(`
     $format: MediaFormat
     $genres: [String]
     $isAdult: Boolean = false
-    $sort: [MediaSort] = [POPULARITY_DESC, SCORE_DESC, TRENDING_DESC]
+    $sort: [MediaSort]
   ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
         hasNextPage
+        total
       }
       media(
         id: $id
