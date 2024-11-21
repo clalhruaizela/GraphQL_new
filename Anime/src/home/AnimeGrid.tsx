@@ -49,7 +49,7 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
   formatTimeUntilAiring,
 }) => {
   return (
-    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 gap-4">
+    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-5 2xl:grid-cols-6 mx-4 gap-4">
       {isLoading ? (
         <Skeletons amount={30} className="h-72 col-span-1" />
       ) : (
@@ -78,7 +78,7 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
                     </TooltipTrigger>
                     <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
                       <div>
-                        <h2 className="text-gray-800 text-lg font-semibold">
+                        <h2 className="text-gray-800  text-lg font-semibold">
                           {anime?.title?.english ||
                             anime?.title?.romaji ||
                             anime?.title?.native}
@@ -137,13 +137,13 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
                 </TooltipProvider>
               </div>
               <CardContent className="p-0">
-                <div className="text-xs 2xl:w-full md:text-sm md:font-semibold lg:font-bold flex flex-col items-center w-full h-8 md:w-full md:h-10 overflow-hidden lg:w-48 pl-1">
-                  <h1>
+                <div className="text-xs 2xl:w-full md:text-sm md:font-semibold lg:font-medium flex flex-col items-center w-full h-8 md:w-full md:h-10 overflow-hidden  pl-1">
+                  <p className=" lg:">
                     {anime?.title?.english ||
                       anime?.title?.romaji ||
                       anime?.title?.native ||
                       anime?.title?.userPreferred}
-                  </h1>
+                  </p>
                 </div>
               </CardContent>
             </Card>

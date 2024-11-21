@@ -47,6 +47,7 @@ const GET_ANIME_BY_ID = graphql(`
             }
           }
         }
+
         averageScore
         status
         format

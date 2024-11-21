@@ -1,80 +1,51 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
-import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
-import graphqlClient from "@/graphql/getGraphqlClient";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { formatTimeUntilAiring } from "./utilties/reUse/formatTimeUntilAiring";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/ui/layout/Layout";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import AnimeGrid from "./AnimeGrid";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useDebounce } from "./utilties/debounce";
-import { MenuUnfoldOutlined } from "@ant-design/icons";
-import { MediaSort } from "@/gql/graphql";
-import AnimeTrending from "./pages/animeTrending";
+import PopularitySix from "./pages/sub_Pagesf_for_Sort_Data/PopularitySix";
+import TrendingSix from "./pages/sub_Pagesf_for_Sort_Data/TrendingSix";
 
 const AnimeHome = () => {
-  const graphql = graphqlClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [debouncedValue] = useDebounce(searchTerm, 300);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-  const genre = searchParams.get("genre")?.split(",") || [];
+  // const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  // const [searchParams, setSearchParams] = useSearchParams();
+  // const page = parseInt(searchParams.get("page") || "1");
+  // const graphql = graphqlClient();
+  // const [debouncedValue] = useDebounce(searchTerm, 300);
+  // const genre = searchParams.get("genre")?.split(",") || [];
   // console.log("genre", genre);
 
-  const { isLoading, isError, data } = useQuery({
-    queryKey: ["anime", page, genre],
-    queryFn: async () => {
-      return await graphql.request(GET_ANIME_BY_ID, {
-        page,
-        perPage: 6,
-        sort: [MediaSort.PopularityDesc, MediaSort.TrendingDesc],
-        search: debouncedValue,
-        genres: genre.length ? genre : undefined,
-      });
-    },
-    placeholderData: keepPreviousData,
-    enabled: !!searchParams,
-  });
-
+  // const { isLoading, isError, data } = useQuery({
+  //   queryKey: ["anime", page, genre],
+  //   queryFn: async () => {
+  //     return await graphql.request(GET_ANIME_BY_ID, {
+  //       search: debouncedValue,
+  //       genres: genre.length ? genre : undefined,
+  //     });
+  //   },
+  //   placeholderData: keepPreviousData,
+  //   enabled: !!searchParams,
+  // });
+  // console.log("data", data);
   const handleTrendingClick = () => {
-    navigate({
-      pathname: "/trending",
-      search: `?trending=${searchTerm}`,
-    });
+    navigate("/trending");
   };
   const handlePopularityClick = () => {
-    navigate({
-      pathname: "/popularity",
-      search: `?popularity=${searchTerm}`,
-    });
+    navigate("/popularity");
   };
 
-  const handleFilterClick = (selectedGenre: string) => {
-    const updatedGenres = selectedGenres.includes(selectedGenre)
-      ? selectedGenres.filter((genre) => genre !== selectedGenre) // Remove genre
-      : [...selectedGenres, selectedGenre]; // Add genre
+  // const handleFilterClick = (selectedGenre: string) => {
+  //   const updatedGenres = selectedGenres.includes(selectedGenre)
+  //     ? selectedGenres.filter((genre) => genre !== selectedGenre) // Remove genre
+  //     : [...selectedGenres, selectedGenre]; // Add genre
+  //   setSelectedGenres(updatedGenres);
+  //   setSearchParams({ genre: updatedGenres.join(","), page: page.toString() });
 
-    setSelectedGenres(updatedGenres);
-    setSearchParams({ genre: updatedGenres.join(","), page: page.toString() });
-
-    if (updatedGenres.length === 0) {
-      navigate("/");
-    }
-  };
+  //   if (updatedGenres.length === 0) {
+  //     navigate("/");
+  //   }
+  // };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,30 +54,30 @@ const AnimeHome = () => {
     }
     navigate({
       pathname: "/search",
-      search: `?search=${searchTerm}`,
+      search: `?name=${searchTerm}`,
     });
   };
-  const onClickCard = (id: number, title: string) => {
-    const formatTitle = title.replace(/\s+/g, "-");
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      navigate(`/home/${id}/${formatTitle}`);
-    }, 500);
-  };
+  // const onClickCard = (id: number, title: string) => {
+  //   const formatTitle = title.replace(/\s+/g, "-");
+  //   setTimeout(() => {
+  //     window.scrollTo(0, 0);
+  //     navigate(`/home/${id}/${formatTitle}`);
+  //   }, 500);
+  // };
 
-  const handlePageChange = (page: number) => {
-    setSearchParams((param) => {
-      param.set("page", page.toString());
-      return param;
-    });
-  };
-  const totalPages = Math.min(data?.Page?.pageInfo?.total || 1, 10);
+  // const handlePageChange = (page: number) => {
+  //   setSearchParams((param) => {
+  //     param.set("page", page.toString());
+  //     return param;
+  //   });
+  // };
+  // const totalPages = Math.min(data?.Page?.pageInfo?.total || 1, 10);
 
-  if (isError) return <div>Error</div>;
+  // if (isError) return <div>Error</div>;
   return (
     <Layout>
       <div className="w-full min-h-screen py-6 pt-32 bg-[#e4ebf0]">
-        <div className="flex justify-center items-center  pb-10">
+        <div className="flex  justify-center items-center  pb-10">
           <div>
             <input
               type="text"
@@ -130,7 +101,7 @@ const AnimeHome = () => {
               search
             </Button>
           </div>
-          <div>
+          {/* <div>
             <Popover>
               <PopoverTrigger className="text-3xl  ml-2">
                 <MenuUnfoldOutlined />{" "}
@@ -169,19 +140,40 @@ const AnimeHome = () => {
                 </div>
               </PopoverContent>
             </Popover>
-          </div>
+          </div> */}
         </div>
-        <div className="grid grid-cols-6 xl:w-10/12 2xl:w-9/12  mx-auto">
-          <h2 className="text-lg font-semibold text-gray-600 py-4 pl-6 ">
-            TRENDING NOW
-          </h2>
-          <div></div>
-          <AnimeGrid
+        <div className=" xl:w-10/12 2xl:w-9/12  mx-auto">
+          {/* <div> */}
+          <div>
+            <div className="flex justify-between">
+              <button
+                className="text-lg font-semibold text-gray-600 py-4 pl-6 "
+                onClick={handleTrendingClick}
+              >
+                TRENDING NOW
+              </button>
+              <button onClick={handleTrendingClick}>View All</button>
+            </div>
+            <TrendingSix />
+          </div>
+          <div>
+            <div className="flex justify-between">
+              <button
+                className="text-lg font-semibold text-gray-600 py-4 pl-6 "
+                onClick={handlePopularityClick}
+              >
+                POPULARITY
+              </button>
+              <button onClick={handlePopularityClick}>View All</button>
+            </div>
+            <PopularitySix />{" "}
+          </div>
+          {/* <AnimeGrid
             data={data?.Page?.media}
             isLoading={isLoading}
             onCardClick={onClickCard}
             formatTimeUntilAiring={formatTimeUntilAiring}
-          />
+          /> */}
           {/* <div className=" col-span-6 text-white">
             {totalPages > 1 && (
               <Pagination className="py-5 w-24 border-t-2 md:py-10 ">
