@@ -21,8 +21,12 @@ const UpcomingSix = () => {
   useEffect(() => {
     const updateItemToShow = () => {
       const width = window.innerWidth;
-      if (width >= 1200) {
+      if (width >= 1536) {
+        setItemToShow(6);
+      } else if (width >= 1280) {
         setItemToShow(5);
+      } else if (width >= 1024) {
+        setItemToShow(6);
       } else if (width >= 768) {
         setItemToShow(5);
       } else {

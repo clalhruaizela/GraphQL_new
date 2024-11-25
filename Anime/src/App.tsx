@@ -6,6 +6,8 @@ import MediaPage from "./home/pages/cardDetail/mediaPage";
 import AnimeTrending from "./home/pages/animeTrending";
 import AnimePopularity from "./home/pages/AnimePopularity";
 
+import Bookshelf from "./home/pages/Bookshelf";
+
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
           <Route path="/trending" element={<AnimeTrending />} />
           <Route path="/Popularity" element={<AnimePopularity />} />
           <Route path="/home/:id/:title" element={<MediaPage />} />
+          <Route path="/bookshelf" element={<Bookshelf />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

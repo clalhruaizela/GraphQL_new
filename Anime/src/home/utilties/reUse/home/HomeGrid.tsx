@@ -48,7 +48,7 @@ const HomeGrid: React.FC<AnimeGridProps> = ({
   formatTimeUntilAiring,
 }) => {
   return (
-    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-5 2xl:grid-cols-6 mx-4 xl:mx-10 gap-4">
+    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 xl:mx-10 gap-2 md:gap-4">
       {isLoading ? (
         <Skeletons amount={5} className="h-72 col-span-1" />
       ) : (
@@ -61,7 +61,7 @@ const HomeGrid: React.FC<AnimeGridProps> = ({
                 onCardClick(anime?.id, anime?.title?.english || "")
               }
             >
-              <div className="flex flex-col justify-center items-center mb-5 h">
+              <div className="flex flex-col justify-center items-center mb-2 md:mb-5 h">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger
@@ -72,9 +72,7 @@ const HomeGrid: React.FC<AnimeGridProps> = ({
                         <img
                           src={anime?.coverImage?.large || ""}
                           alt={anime?.title?.english || ""}
-                          // width="100%"
-                          // height="100%"
-                          className="object-cover h-48 xl:h-80 rounded-t-sm w-full"
+                          className="object-cover h-44 md:h-48 xl:h-80 rounded-t-sm w-full"
                         />
                       </div>
                     </TooltipTrigger>

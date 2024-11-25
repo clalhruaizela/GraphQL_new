@@ -143,41 +143,50 @@ const AnimeHome = () => {
             </Popover>
           </div> */}
         </div>
+        <>
+          <button onClick={() => navigate("/bookshelf")}> dd</button>
+        </>
         <div className=" xl:w-10/12 2xl:w-9/12  mx-auto">
           {/* <div> */}
           <div>
             <div className="flex justify-between">
               <button
-                className="text-lg font-semibold text-gray-600 py-4 pl-6 "
+                className="text-base md:text-lg font-semibold text-gray-600 py-4 pl-4 "
                 onClick={handleTrendingClick}
               >
                 TRENDING NOW
               </button>
-              <button onClick={handleTrendingClick}>View All</button>
+              <button className="pr-4 text-sm" onClick={handleTrendingClick}>
+                View All
+              </button>
             </div>
             <TrendingSix />
           </div>
           <div className="mt-10">
             <div className="flex justify-between">
               <button
-                className="text-lg font-semibold text-gray-600 py-4 pl-6 "
+                className="text-base md:text-lg font-semibold text-gray-600 py-4 pl-4 "
                 onClick={handlePopularityClick}
               >
                 POPULARITY
               </button>
-              <button onClick={handlePopularityClick}>View All</button>
+              <button className="pr-4 text-sm" onClick={handlePopularityClick}>
+                View All
+              </button>
             </div>
             <PopularitySix />{" "}
           </div>
           <div className="mt-10">
             <div className="flex justify-between">
               <button
-                className="text-lg font-semibold text-gray-600 py-4 pl-6 "
+                className="text-base md:text-lg font-semibold text-gray-600 py-4 pl-4 "
                 onClick={handlePopularityClick}
               >
                 UPCOMING NEXT SEASON
               </button>
-              <button onClick={handlePopularityClick}>View All</button>
+              <button className="pr-4 text-sm" onClick={handlePopularityClick}>
+                View All
+              </button>
             </div>
             <UpcomingSix />{" "}
           </div>
