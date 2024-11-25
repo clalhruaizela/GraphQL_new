@@ -17,11 +17,8 @@ const Bookshelf = () => {
     <div className=" min-w-screen max-h-auto">
       <div className=" ">
         <div className="">
-          <img
-            src={lightVectors}
-            alt=""
-            className="w-full h-[700px] sm:h-[400px] lg:h-[850px]"
-          />
+          <img src={lightVectors} alt="" className="w-full  lg:h-[850px]" />{" "}
+          //aspect-ratio hmang tur
         </div>
         <div className="absolute text-white top-14 left-10">
           <p className="font-bold text-4xl">Bookshelf</p>
