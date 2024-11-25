@@ -1,20 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { MediaSort } from "@/gql/graphql";
-import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
-import graphqlClient from "@/graphql/getGraphqlClient";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useDebounce } from "../utilties/debounce";
-import AnimeGrid from "../AnimeGrid";
-import { formatTimeUntilAiring } from "../utilties/reUse/formatTimeUntilAiring";
-import Layout from "@/components/ui/layout/Layout";
 import {
+  Button,
+  MediaSort,
+  GET_ANIME_BY_ID,
+  graphqlClient,
+  keepPreviousData,
+  useQuery,
+  useState,
+  useNavigate,
+  useSearchParams,
+  useDebounce,
+  formatTimeUntilAiring,
+  Layout,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { MenuUnfoldOutlined } from "@ant-design/icons";
+  MenuUnfoldOutlined,
+  AnimeGrid,
+} from "@/home/pages/importDependencies";
 
 const AnimeTrending = () => {
   const navigate = useNavigate();
@@ -25,7 +27,6 @@ const AnimeTrending = () => {
   const trending = searchParams.get("trending") || "";
   const [debouncedValue] = useDebounce(searchTerm, 300);
   const genre = searchParams.get("genre")?.split(",") || [];
-  const page = parseInt(searchParams.get("page") || "1");
 
   const { isLoading, isError, data } = useQuery({
     queryKey: ["searchAnime", trending, genre],
@@ -63,7 +64,7 @@ const AnimeTrending = () => {
       ? selectedGenres.filter((genre) => genre !== selectedGenre) // Remove genre
       : [...selectedGenres, selectedGenre]; // Add genre
     setSelectedGenres(updatedGenres);
-    setSearchParams({ genre: updatedGenres.join(","), page: page.toString() });
+    setSearchParams({ genre: updatedGenres.join(",") });
 
     if (updatedGenres.length === 0) {
       navigate("/trending");
@@ -80,30 +81,30 @@ const AnimeTrending = () => {
     <Layout>
       <div className="w-full min-h-screen py-6 pt-32 bg-[#e4ebf0]">
         <div className="flex flex-col justify-center items-center w-full pb-10">
-          <div>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="text-black py-1 px-2 "
-            />
-            {searchTerm && ( // Only show the clear button when there is input
-              <button
-                onClick={() => setSearchTerm("")} // Clears the input field
-                className="text-black -ml-5 mr-2 text-sm"
+          <div className="flex flex-row py-10">
+            <div>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="text-black py-1 px-2 "
+              />
+              {searchTerm && ( // Only show the clear button when there is input
+                <button
+                  onClick={() => setSearchTerm("")} // Clears the input field
+                  className="text-black -ml-5 mr-2 text-sm"
+                >
+                  X
+                </button>
+              )}
+              <Button
+                variant={"destructive"}
+                type="submit"
+                onClick={handleSearchSubmit}
               >
-                X
-              </button>
-            )}
-            <Button
-              variant={"destructive"}
-              type="submit"
-              onClick={handleSearchSubmit}
-            >
-              search
-            </Button>
-          </div>
-          <div>
+                search
+              </Button>
+            </div>
             <div>
               <Popover>
                 <PopoverTrigger className="text-3xl  ml-2">
@@ -144,14 +145,14 @@ const AnimeTrending = () => {
                 </PopoverContent>
               </Popover>
             </div>
-            <div>
-              <AnimeGrid
-                data={data?.Page?.media}
-                isLoading={isLoading}
-                onCardClick={onClickCard}
-                formatTimeUntilAiring={formatTimeUntilAiring}
-              />
-            </div>
+          </div>
+          <div>
+            <AnimeGrid
+              data={data?.Page?.media}
+              isLoading={isLoading}
+              onCardClick={onClickCard}
+              formatTimeUntilAiring={formatTimeUntilAiring}
+            />
           </div>
         </div>
       </div>

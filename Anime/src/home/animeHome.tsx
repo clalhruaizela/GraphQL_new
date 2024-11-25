@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import PopularitySix from "./pages/sub_Pagesf_for_Sort_Data/PopularitySix";
 import TrendingSix from "./pages/sub_Pagesf_for_Sort_Data/TrendingSix";
+import UpcomingSix from "./pages/sub_Pagesf_for_Sort_Data/UpcomingSix";
 
 const AnimeHome = () => {
   const navigate = useNavigate();
@@ -156,7 +157,7 @@ const AnimeHome = () => {
             </div>
             <TrendingSix />
           </div>
-          <div>
+          <div className="mt-10">
             <div className="flex justify-between">
               <button
                 className="text-lg font-semibold text-gray-600 py-4 pl-6 "
@@ -168,12 +169,18 @@ const AnimeHome = () => {
             </div>
             <PopularitySix />{" "}
           </div>
-          {/* <AnimeGrid
-            data={data?.Page?.media}
-            isLoading={isLoading}
-            onCardClick={onClickCard}
-            formatTimeUntilAiring={formatTimeUntilAiring}
-          /> */}
+          <div className="mt-10">
+            <div className="flex justify-between">
+              <button
+                className="text-lg font-semibold text-gray-600 py-4 pl-6 "
+                onClick={handlePopularityClick}
+              >
+                UPCOMING NEXT SEASON
+              </button>
+              <button onClick={handlePopularityClick}>View All</button>
+            </div>
+            <UpcomingSix />{" "}
+          </div>
           {/* <div className=" col-span-6 text-white">
             {totalPages > 1 && (
               <Pagination className="py-5 w-24 border-t-2 md:py-10 ">

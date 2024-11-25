@@ -8,8 +8,10 @@ const GET_ANIME_BY_ID = graphql(`
     $perPage: Int
     $format: MediaFormat
     $genres: [String]
+    $status: MediaStatus
     $isAdult: Boolean = false
     $sort: [MediaSort]
+    $season: MediaSeason
   ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
@@ -22,9 +24,10 @@ const GET_ANIME_BY_ID = graphql(`
         type: ANIME
         format: $format
         sort: $sort
-        status: RELEASING
+        status: $status
         isAdult: $isAdult
         genre_in: $genres
+        season: $season
       ) {
         id
         coverImage {

@@ -1,6 +1,5 @@
 import React from "react";
 import { SmileOutlined } from "@ant-design/icons";
-
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Tooltip,
@@ -8,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Skeletons } from "./utilties/skeletion";
+import { Skeletons } from "../../skeletion";
 
 interface Anime {
   id: number;
@@ -42,16 +41,16 @@ interface AnimeGridProps {
   formatTimeUntilAiring: (time: number) => string; // Function to format time
 }
 
-const AnimeGrid: React.FC<AnimeGridProps> = ({
+const HomeGrid: React.FC<AnimeGridProps> = ({
   data = [],
   isLoading,
   onCardClick,
   formatTimeUntilAiring,
 }) => {
   return (
-    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-5 2xl:grid-cols-6 mx-4 gap-4">
+    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-5 2xl:grid-cols-6 mx-4 xl:mx-10 gap-4">
       {isLoading ? (
-        <Skeletons amount={30} className="h-72 col-span-1" />
+        <Skeletons amount={5} className="h-72 col-span-1" />
       ) : (
         <>
           {data.map((anime) => (
@@ -62,19 +61,22 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
                 onCardClick(anime?.id, anime?.title?.english || "")
               }
             >
-              <div className="flex flex-col justify-center items-center mb-5 h-53">
+              <div className="flex flex-col justify-center items-center mb-5 h">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger
                       asChild
-                      className="aspect-ratio-1/1 h-40 w-32 md:h-48 xl:w-56 xl:h-60 2xl:w-52 2xl:h-72"
+                      className="relative aspect-ratio-1/1 "
                     >
-                      <img
-                        src={anime?.coverImage?.large || ""}
-                        alt={anime?.title?.english || ""}
-                        width="70%"
-                        height="70%"
-                      />
+                      <div className="absolute h-full w-full ">
+                        <img
+                          src={anime?.coverImage?.large || ""}
+                          alt={anime?.title?.english || ""}
+                          // width="100%"
+                          // height="100%"
+                          className="object-cover h-48 xl:h-80 rounded-t-sm w-full"
+                        />
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
                       <div>
@@ -153,5 +155,4 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
     </div>
   );
 };
-
-export default AnimeGrid;
+export default HomeGrid;

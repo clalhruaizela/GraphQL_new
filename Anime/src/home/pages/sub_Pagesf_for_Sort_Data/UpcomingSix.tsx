@@ -1,19 +1,23 @@
-import { MediaSort } from "@/gql/graphql";
-import GET_ANIME_BY_ID from "@/graphql/get_anime_by_id/animeMedia";
-import graphqlClient from "@/graphql/getGraphqlClient";
-import { formatTimeUntilAiring } from "@/home/utilties/reUse/formatTimeUntilAiring";
+import { useEffect } from "react";
+import {
+  formatTimeUntilAiring,
+  GET_ANIME_BY_ID,
+  graphqlClient,
+  MediaSort,
+  useNavigate,
+  useQuery,
+  useSearchParams,
+  useState,
+} from "../importDependencies";
 import HomeGrid from "@/home/utilties/reUse/home/HomeGrid";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { MediaStatus } from "@/gql/graphql";
 
-const TrendingSix = () => {
+const UpcomingSix = () => {
   const graphql = graphqlClient();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const trending = searchParams.get("trending") || "";
+  const upcoming = searchParams.get("upcoming") || "";
   const [itemToShow, setItemToShow] = useState(6);
-
   useEffect(() => {
     const updateItemToShow = () => {
       const width = window.innerWidth;
@@ -27,21 +31,19 @@ const TrendingSix = () => {
     };
     updateItemToShow();
     window.addEventListener("resize", updateItemToShow);
-
     return () => {
       window.removeEventListener("resize", updateItemToShow);
     };
-  }, []);
+  });
 
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["searchAnime", trending],
+    queryKey: ["searchAnime-upcoming", upcoming],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
-        sort: [MediaSort.TrendingDesc],
+        sort: [MediaSort.PopularityDesc],
+        status: MediaStatus.NotYetReleased,
       });
     },
-    placeholderData: keepPreviousData,
-    enabled: !!trending || !!searchParams,
   });
 
   const onClickCard = (id: number, title: string) => {
@@ -51,15 +53,13 @@ const TrendingSix = () => {
     }, 500);
   };
 
-  if (isError) {
-    return <div>Error</div>;
-  }
+  if (isError) return <div>Error</div>;
 
-  const limitedDatas = data?.Page?.media?.slice(0, itemToShow);
+  const limitedData = data?.Page?.media?.slice(0, itemToShow);
   return (
     <>
       <HomeGrid
-        data={limitedDatas}
+        data={limitedData}
         isLoading={isLoading}
         onCardClick={onClickCard}
         formatTimeUntilAiring={formatTimeUntilAiring}
@@ -68,4 +68,4 @@ const TrendingSix = () => {
   );
 };
 
-export default TrendingSix;
+export default UpcomingSix;

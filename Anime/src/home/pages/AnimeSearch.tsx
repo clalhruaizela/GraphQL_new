@@ -2,14 +2,12 @@ import { Button } from "@/components/ui/button";
 import graphqlClient from "@/graphql/getGraphqlClient";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
 import { formatTimeUntilAiring } from "../utilties/reUse/formatTimeUntilAiring";
-
 import { GET_SEARCH_ANIME } from "@/graphql/search/animeSearch";
 import Layout from "@/components/ui/layout/Layout";
 import { useState } from "react";
-import AnimeGrid from "../AnimeGrid";
 import { useDebounce } from "../utilties/debounce";
+import AnimeGrid from "../utilties/reUse/page/AnimeGrid";
 
 const AnimeSearch = () => {
   const graphql = graphqlClient();
