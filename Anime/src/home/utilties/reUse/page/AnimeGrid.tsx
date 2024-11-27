@@ -59,7 +59,13 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
               key={anime?.id}
               className="w-full text-gray-400 hover:text-gray-600"
               onClick={() =>
-                onCardClick(anime?.id, anime?.title?.english || "")
+                onCardClick(
+                  anime?.id,
+                  anime?.title?.english ||
+                    anime?.title?.romaji ||
+                    anime?.title?.native ||
+                    ""
+                )
               }
             >
               <div className="flex flex-col justify-center items-center mb-5 h">

@@ -1,3 +1,4 @@
+import { MediaStatus } from "@/gql/graphql";
 import {
   Button,
   MediaSort,
@@ -18,7 +19,7 @@ import {
   AnimeGrid,
 } from "@/home/pages/importDependencies";
 
-const AnimeTrending = () => {
+const AnimeUpcoming = () => {
   const navigate = useNavigate();
   const graphql = graphqlClient();
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -33,7 +34,8 @@ const AnimeTrending = () => {
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
         search: debouncedValue,
-        sort: [MediaSort.TrendingDesc],
+        sort: [MediaSort.PopularityDesc],
+        status: MediaStatus.NotYetReleased,
         genres: genre.length ? genre : undefined,
       });
     },
@@ -41,10 +43,10 @@ const AnimeTrending = () => {
     enabled: !!searchParams,
   });
   const onClickCard = (id: number, title: string) => {
-    // const formatTitle = title.replace(/\s+/g, "-");
+    const formatTitle = title.replace(/\s+/g, "-");
     setTimeout(() => {
       window.scrollTo(0, 0);
-      navigate(`/home/${id}/${title}/`);
+      navigate(`/home/${id}/${formatTitle}`);
     }, 500);
   };
 
@@ -160,4 +162,4 @@ const AnimeTrending = () => {
   );
 };
 
-export default AnimeTrending;
+export default AnimeUpcoming;

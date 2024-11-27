@@ -35,6 +35,9 @@ const AnimeHome = () => {
   const handlePopularityClick = () => {
     navigate("/popularity");
   };
+  const handleUpcomingClick = () => {
+    navigate("/upcoming");
+  };
 
   // const handleFilterClick = (selectedGenre: string) => {
   //   const updatedGenres = selectedGenres.includes(selectedGenre)
@@ -180,11 +183,11 @@ const AnimeHome = () => {
             <div className="flex justify-between">
               <button
                 className="text-base md:text-lg font-semibold text-gray-600 py-4 pl-4 "
-                onClick={handlePopularityClick}
+                onClick={handleUpcomingClick}
               >
                 UPCOMING NEXT SEASON
               </button>
-              <button className="pr-4 text-sm" onClick={handlePopularityClick}>
+              <button className="pr-4 text-sm" onClick={handleUpcomingClick}>
                 View All
               </button>
             </div>
