@@ -9,7 +9,7 @@ const Layout = ({ children }) => {
   };
   return (
     <div className="min-h-screen flex flex-col ">
-      <header className="z-50" onClick={handleNavigate}>
+      <header className="z-50 md:hidden lg:block" onClick={handleNavigate}>
         <Navbar />
       </header>
       <main className="grow">

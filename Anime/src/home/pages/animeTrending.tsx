@@ -1,3 +1,4 @@
+import { MediaStatus } from "@/gql/graphql";
 import {
   Button,
   MediaSort,
@@ -16,6 +17,11 @@ import {
   PopoverTrigger,
   MenuUnfoldOutlined,
   AnimeGrid,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
 } from "@/home/pages/importDependencies";
 
 const AnimeTrending = () => {
@@ -27,13 +33,17 @@ const AnimeTrending = () => {
   const trending = searchParams.get("trending") || "";
   const [debouncedValue] = useDebounce(searchTerm, 300);
   const genre = searchParams.get("genre")?.split(",") || [];
+  const page = parseInt(searchParams.get("page") || "1");
 
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["searchAnime", trending, genre],
+    queryKey: ["searchAnime", trending, genre, page],
     queryFn: async () => {
       return await graphql.request(GET_ANIME_BY_ID, {
+        page: page,
+        perPage: 48,
         search: debouncedValue,
         sort: [MediaSort.TrendingDesc],
+        // status: MediaStatus.Releasing,
         genres: genre.length ? genre : undefined,
       });
     },
@@ -41,10 +51,10 @@ const AnimeTrending = () => {
     enabled: !!searchParams,
   });
   const onClickCard = (id: number, title: string) => {
-    // const formatTitle = title.replace(/\s+/g, "-");
+    const formatTitle = title.replace(/\s+/g, "-");
     setTimeout(() => {
       window.scrollTo(0, 0);
-      navigate(`/home/${id}/${title}/`);
+      navigate(`/home/${id}/${formatTitle}`);
     }, 500);
   };
 
@@ -71,12 +81,19 @@ const AnimeTrending = () => {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const handlePageChange = (page: number) => {
+    setSearchParams((param) => {
+      param.set("page", page.toString());
+      return param;
+    });
+  };
+
+  const totalPages = Math.min(data?.Page?.media?.length || 1);
+
   if (isError) {
     return <div>Error</div>;
   }
+
   return (
     <Layout>
       <div className="w-full min-h-screen py-6 pt-32 bg-[#e4ebf0]">
@@ -154,6 +171,43 @@ const AnimeTrending = () => {
               formatTimeUntilAiring={formatTimeUntilAiring}
             />
           </div>
+        </div>
+        <div className=" col-span-6 text-white">
+          {totalPages > 1 && (
+            <Pagination className="py-5 w-24 border-t-2 md:py-10 ">
+              <PaginationContent>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (item) => {
+                    if (
+                      item === 1 ||
+                      item === totalPages ||
+                      Math.abs(page - item) <= 2 // Checks if the page number (item) is close enough to the current page (within 2 pages),
+                    ) {
+                      return (
+                        <PaginationItem key={item}>
+                          <PaginationLink
+                            className="bg-black"
+                            isActive={item === page}
+                            onClick={() => {
+                              window.scrollTo(0, 0);
+                              handlePageChange(item);
+                            }}
+                          >
+                            {item}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    } else if (item === page - 3 || item === page + 3) {
+                      return (
+                        <PaginationEllipsis key={item} className="text-black" />
+                      );
+                    }
+                    return null;
+                  }
+                )}
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       </div>
     </Layout>

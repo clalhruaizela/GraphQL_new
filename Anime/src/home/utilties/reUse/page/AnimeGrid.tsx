@@ -1,6 +1,5 @@
 import React from "react";
 import { SmileOutlined } from "@ant-design/icons";
-
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Tooltip,
@@ -49,9 +48,9 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
   formatTimeUntilAiring,
 }) => {
   return (
-    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-5 2xl:grid-cols-6 mx-4 xl:mx-96 gap-4">
+    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 xl:mx-96 gap-4">
       {isLoading ? (
-        <Skeletons amount={30} className="h-72 col-span-1" />
+        <Skeletons amount={48} className="h-80 w-60 col-span-1" />
       ) : (
         <>
           {data.map((anime) => (
@@ -68,25 +67,20 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
                 )
               }
             >
-              <div className="flex flex-col justify-center items-center mb-5 h">
+              <div className="flex flex-col justify-center items-center mb-2 h">
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger
-                      asChild
-                      className="relative aspect-ratio-1/1 "
-                    >
-                      <div className="absolute h-full w-full ">
+                    <TooltipTrigger asChild>
+                      <div>
                         <img
                           src={anime?.coverImage?.large || ""}
                           alt={anime?.title?.english || ""}
-                          // width="100%"
-                          // height="100%"
-                          className="object-cover h-48 xl:h-80 rounded-t-sm w-full"
+                          className="object-cover h-auto aspect-[2/3] md:aspect-[2/3] rounded-t-sm w-full"
                         />
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
-                      <div>
+                    <TooltipContent className="w-80 flex justify-center items-center flex-col  py-2">
+                      <div className="">
                         <h2 className="text-gray-800  text-lg font-semibold">
                           {anime?.title?.english ||
                             anime?.title?.romaji ||
@@ -145,9 +139,9 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <CardContent className="p-0">
+              <CardContent className="p-0 ">
                 <div className="text-xs 2xl:w-full md:text-sm md:font-semibold lg:font-medium flex flex-col items-center w-full h-8 md:w-full md:h-10 overflow-hidden  pl-1">
-                  <p className=" lg:">
+                  <p className=" text-center">
                     {anime?.title?.english ||
                       anime?.title?.romaji ||
                       anime?.title?.native ||

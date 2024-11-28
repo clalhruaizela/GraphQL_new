@@ -72,13 +72,13 @@ const HomeGrid: React.FC<AnimeGridProps> = ({
                         <img
                           src={anime?.coverImage?.large || ""}
                           alt={anime?.title?.english || ""}
-                          className="object-cover h-44 md:h-48 xl:h-80 rounded-t-sm w-full"
+                          className="object-cover aspect-[3/5] md:aspect-[1/2]  lg:aspect-[2/3] rounded-t-sm w-full"
                         />
                       </div>
                     </TooltipTrigger>
                     <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
                       <div>
-                        <h2 className="text-gray-800  text-lg font-semibold">
+                        <h2 className="text-gray-800 text-center text-lg font-semibold">
                           {anime?.title?.english ||
                             anime?.title?.romaji ||
                             anime?.title?.native}
@@ -138,7 +138,7 @@ const HomeGrid: React.FC<AnimeGridProps> = ({
               </div>
               <CardContent className="p-0">
                 <div className="text-xs 2xl:w-full md:text-sm md:font-semibold lg:font-medium flex flex-col items-center w-full h-8 md:w-full md:h-10 overflow-hidden  pl-1">
-                  <p className=" lg:">
+                  <p className=" text-center">
                     {anime?.title?.english ||
                       anime?.title?.romaji ||
                       anime?.title?.native ||

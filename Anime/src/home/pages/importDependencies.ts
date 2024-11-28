@@ -15,3 +15,10 @@ export {
 } from "@/components/ui/popover";
 export { MenuUnfoldOutlined } from "@ant-design/icons";
 export { default as AnimeGrid } from "../utilties/reUse/page/AnimeGrid";
+export {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";

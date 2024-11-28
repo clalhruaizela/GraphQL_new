@@ -59,26 +59,32 @@ const MediaPage = () => {
               <img
                 src={data?.Media?.bannerImage || ""}
                 alt={data?.Media?.title?.english || ""}
-                className="object-cover w-full h-52 md:h-96 xl:h-60 2xl:h-96"
+                className="object-cover w-full aspect-[3/1.7] md:aspect-[2.2] lg:aspect-[3/1] xl:aspect-[3/1] 2xl:aspect-[6/1.1] "
               />
             </div>
           )}
-          <div className="w-full grid  md:grid-cols-12 gap-8 xl:">
-            <div className=" relative -mt-20  md:-mt-28 xl:-mt-14 2xl:-mt-36 md:col-span-4 lg:ml-4 lg:col-span-3 xl:col-span-3  ">
-              <div className="grid grid-cols-8 md:flex md:flex-col w-full gap-5 items-end  static pl-6  xl:ml-7">
-                <p className="md:col-span-4 w-28 lg:w-48 xl:w-44 2xl:w-60">
+          <div className="w-full grid  md:grid-cols-12 gap-0 md:gap-8 xl:">
+            <div className=" relative mt-2  md:-mt-28 xl:-mt-14 2xl:-mt-36 md:col-span-4 lg:ml-4 lg:col-span-3 xl:col-span-3  ">
+              <div className="grid grid-cols-8 md:flex md:flex-col w-full gap-5 items-end  static px-4  xl:ml-7">
+                <div className="col-span-4 size-full xl:w-60  ">
                   {data?.Media?.coverImage?.large && (
                     <img
                       src={data?.Media?.coverImage?.large || ""}
                       className={`${
                         data?.Media?.bannerImage
-                          ? "static  md:w-full  xl:left-96 xl:top-96 rounded-sm lg:left-56 lg:top-48 "
-                          : " xl:mt-40  "
+                          ? " w-full h-full object-cover aspect-[2.5/3] xl:aspect-[1/1.5] rounded-sm -mt-4 "
+                          : " mt-24 rounded-sm md:mt-32 xl:mt-40  "
                       }`}
                     />
                   )}
-                </p>
-                <div className="gap-1 md:col-span-4 pl-20 flex flex-row ">
+                </div>
+                <div
+                  className={`${
+                    data?.Media?.bannerImage
+                      ? "gap-1 col-span-4 md:pl-20 flex flex-row mb-4"
+                      : "gap-1 col-span-4 md:pl-20 flex flex-row "
+                  }`}
+                >
                   <div className="items-center">
                     <Button variant={"default"}> Add To List </Button>
                   </div>
@@ -93,14 +99,16 @@ const MediaPage = () => {
               className={`${
                 data?.Media?.bannerImage
                   ? "mt-10  md:mt-6  md:col-span-6 lg:col-span-9 xl:col-span-6 lg:block xl:block md:block"
-                  : "mt-40 md:col-span-6 lg:col-span-9 xl:col-span-6 lg:block xl:block md:block"
+                  : "mt-20 md:mt-6 md:col-span-6 lg:col-span-9 xl:col-span-6 lg:block xl:block md:block"
               }`}
             >
               <div className="text-gray-600  pl-6 md:pl-0 md:px-4 lg:text-sm xl:pl-4">
-                <h1 className="font-bold text-xl ">
-                  {data?.Media?.title?.english || ""}
+                <h1 className="font-bold text-xl md:pb-4 ">
+                  {data?.Media?.title?.english ||
+                    data?.Media?.title?.romaji ||
+                    ""}
                 </h1>
-                <div className="hidden lg:block xl:block">
+                <div className="hidden md:block lg:block xl:block">
                   <div
                     className={` overflow-hidden gap-4 ${
                       isExpanded
@@ -267,7 +275,7 @@ const MediaPage = () => {
                     {data?.Media?.tags?.map((tag) => (
                       <Card
                         key={tag?.id}
-                        className="flex flex-row justify-between px-2 py-1 text-gray-500 mb-2 "
+                        className="flex flex-row justify-between px-2 py-1 text-gray-500 mb-2 bg-white "
                       >
                         <p>{tag?.name}</p>
                         <p>{tag?.rank}%</p>
@@ -300,52 +308,66 @@ const MediaPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="md:col-span-8 xl:col-span-6   lg:grid-cols-9  mt-12 md:mx-4">
-                  {/* <div className="text-sm mt-12  "> */}
-                  <h2>Relations</h2>
-                  <div className=" md:w-full lg:col-span-9 xl:grid-cols-7 2xl:grid-cols-10 xl: lg:w-full  lg:whitespace-normal lg: xl:w-full pt-3 whitespace-nowrap justify-between xl:justify-normal lg:overflow-auto overflow-x-scroll gap-4 grid  grid-flow-col lg:[grid-auto-flow:initial]">
-                    {data?.Media?.relations?.nodes?.map((relation) => (
-                      <Card
-                        key={relation?.id}
-                        className="xl:col-span-1 2xl:col-span-1 2xl:w-20"
-                        onClick={() =>
-                          handleSuggestionClick(
-                            relation?.id,
-                            relation?.title?.english ||
-                              relation?.title?.native ||
-                              relation?.title?.romaji
-                          )
-                        }
-                      >
-                        <div className="flex flex-row lg:w-full w-72   xl:flex-col xl:w-36  ">
-                          <img
-                            src={relation?.coverImage?.medium || ""}
-                            alt={relation?.title?.english || ""}
-                            className="w-24 h-28 rounded-l-sm xl:rounded-l-none"
-                          />{" "}
-                          <div className="flex flex-col gap-2 text-sm pl-2 xl:pl-0 w-60 xl:-mt-7  xl: xl:w-24 lg:w-full overflow-hidden">
-                            <h4 className="text-blue-400 xl:bg-gray-800/70 xl:flex xl:justify-center xl:items-center xl:text-white pt-2 ">
-                              {data.Media?.source}
-                            </h4>
-                            <p className="xl:hidden">
-                              {relation?.title?.english ||
-                                relation?.title?.native ||
-                                relation?.title?.romaji}
-                            </p>
-                            <div className="flex flex-row xl:hidden gap-2 pt-5 text-xs text-gray-500">
-                              <p> {relation?.type}</p>
-                              <p> {relation?.status} </p>
-                            </div>
-                          </div>
+                <div className="md:col-span-9 xl:col-span-6   mt-12 ">
+                  {data?.Media?.relations?.nodes &&
+                    data?.Media?.relations?.nodes?.length > 0 && (
+                      <div>
+                        <h2>Relations</h2>
+                        <div className=" md:w-full md:col-span-9 xl:grid-cols-7 2xl:grid-cols-10   md:whitespace-normal  pt-3 whitespace-nowrap justify-between xl:justify-normal md:overflow-auto overflow-x-scroll gap-4 grid  grid-flow-col md:[grid-auto-flow:initial]">
+                          {data?.Media?.relations?.nodes?.map((relation) => (
+                            <Card
+                              key={relation?.id}
+                              className=" xl:col-span-1  "
+                              onClick={() => {
+                                if (
+                                  relation?.id !== undefined &&
+                                  relation?.title !== undefined
+                                ) {
+                                  handleSuggestionClick(
+                                    relation.id,
+                                    relation!.title!.english ||
+                                      relation!.title!.native ||
+                                      relation!.title!.romaji ||
+                                      "Unknown Title"
+                                  );
+                                }
+                              }}
+                            >
+                              <div className="flex flex-row   w-full   xl:flex-col   ">
+                                <div className="w-24  md:w-40 ">
+                                  <img
+                                    src={
+                                      relation?.coverImage?.large ||
+                                      relation?.coverImage?.medium ||
+                                      ""
+                                    }
+                                    alt={relation?.title?.english || ""}
+                                    className="w-full h-full aspect-[2/1] md:aspect-[2/1.8] object-cover xl:aspect-[2/2.5] rounded-l-sm xl:rounded-l-none"
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-2 text-xs pl-2 xl:pl-0 w-40 md:w-full xl:-mt-7  overflow-hidden">
+                                  <h4 className="text-blue-400  xl:bg-gray-800/70 xl:flex xl:justify-center xl:items-center xl:text-white pt-2 ">
+                                    {data.Media?.source}
+                                  </h4>
+                                  <p className="xl:hidden">
+                                    {relation?.title?.english ||
+                                      relation?.title?.native ||
+                                      relation?.title?.romaji}
+                                  </p>
+                                  <div className="flex flex-row xl:hidden gap-2 pt-5 text-xs text-gray-500">
+                                    <p> {relation?.type}</p>
+                                    <p> {relation?.status} </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
                         </div>
-                      </Card>
-                    ))}
-                    {/* </div> */}
-                  </div>
-                  <div className="grid md:col-span-10  grid-cols-6 my-10">
+                      </div>
+                    )}
+                  <div className="grid md:col-span-10  grid-cols-5 my-10">
                     <h1>Characters</h1>
-                    {/* <div className="grid grid-cols-6"> */}
-                    <div className="col-span-6 grid  xl:grid-cols-3 pt-2 gap-2 xl:gap-10">
+                    <div className="col-span-5 grid  xl:grid-cols-3 pt-2 gap-2 xl:gap-10">
                       {data?.Media?.characters?.edges
                         ?.filter(
                           (anime) =>
@@ -360,11 +382,11 @@ const MediaPage = () => {
                             key={index}
                             className=" text-xs flex justify-between "
                           >
-                            <div className="flex">
+                            <div className="flex w-20 md:w-28 ">
                               <img
                                 src={anime?.node?.image?.large || ""}
                                 alt={anime?.node?.name?.full || ""}
-                                className="w-16 rounded-l-sm "
+                                className="w-full h-full aspect-[1/1] lg: rounded-l-sm "
                               />
                               <div className="justify-between py-2 pl-2 flex flex-col">
                                 <p>{anime?.node?.name?.full || ""}</p>
@@ -372,7 +394,7 @@ const MediaPage = () => {
                               </div>
                             </div>
                             {anime!.voiceActors!.length > 0 && (
-                              <div className=" flex  ">
+                              <div className=" flex  w-20 md:w-28">
                                 <div className=" flex text-right flex-col justify-between pr-2  py-2">
                                   <p>{anime!.voiceActors![0]!.name!.full}</p>
                                   <p className=" text-gray-500 justify-end flex">
@@ -384,7 +406,7 @@ const MediaPage = () => {
                                     anime!.voiceActors![0]!.image!.large || ""
                                   }
                                   alt={anime!.voiceActors![0]!.name!.full || ""}
-                                  className="w-16 rounded-r-sm"
+                                  className="w-full h-full aspect-[1/1.3] rounded-r-sm"
                                 />
                               </div>
                             )}
@@ -428,10 +450,10 @@ const MediaPage = () => {
                           })}
                     </div>
                   </div>
-                  <div className="my-10 md:col-span-10">
-                    <h2>Trailer</h2>
-                    <div className="pt-2 ">
-                      {trailerUrl ? (
+                  {trailerUrl && (
+                    <div className="my-10 md:col-span-10">
+                      <h2>Trailer</h2>
+                      <div className="pt-2 ">
                         <div className="w-full max-w-2xl xl:max-w-lg h-60 ">
                           <iframe
                             src={trailerUrl}
@@ -442,11 +464,9 @@ const MediaPage = () => {
                             allowFullScreen
                           ></iframe>
                         </div>
-                      ) : (
-                        <p>No trailer available</p>
-                      )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="md:col-span-10">
                     <div>
                       <h2>Recommendations</h2>
@@ -457,28 +477,35 @@ const MediaPage = () => {
                               key={
                                 recommendation?.node?.mediaRecommendation?.id
                               }
-                              onClick={() =>
-                                handleSuggestionClick(
-                                  recommendation?.node?.mediaRecommendation?.id,
+                              onClick={() => {
+                                const mediaId =
+                                  recommendation?.node?.mediaRecommendation?.id;
+                                const mediaTitle =
                                   recommendation?.node?.mediaRecommendation
-                                    ?.title?.english
-                                )
-                              }
+                                    ?.title?.english || "Unknown Title";
+
+                                if (mediaId !== undefined) {
+                                  handleSuggestionClick(mediaId, mediaTitle);
+                                }
+                              }}
                             >
                               <div className="flex flex-col w-36  py-2 ">
                                 <img
                                   src={
                                     recommendation?.node?.mediaRecommendation
-                                      ?.coverImage?.large || ""
+                                      ?.coverImage?.large ||
+                                    recommendation?.node?.mediaRecommendation
+                                      ?.coverImage?.medium ||
+                                    ""
                                   }
                                   alt={
                                     recommendation?.node?.mediaRecommendation
                                       ?.title?.english || ""
                                   }
-                                  className="w-40 h-44 rounded-sm shadow-lg"
+                                  className="w-full h-full aspect-[2/3] rounded-sm shadow-lg"
                                 />
                                 <div>
-                                  <div className=" flex items-center justify-center pt-2  w-36 text-xs   ">
+                                  <div className=" flex items-center justify-center pt-2 text-center w-36 text-xs   ">
                                     {recommendation?.node?.mediaRecommendation
                                       ?.title?.english ||
                                       recommendation?.node?.mediaRecommendation

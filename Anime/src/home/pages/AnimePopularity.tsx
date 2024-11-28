@@ -45,7 +45,7 @@ const AnimePopularity = () => {
   const onClickCard = (id: number, title: string) => {
     const formatTitle = title.replace(/\s+/g, "-");
     setTimeout(() => {
-      navigate(`/${formatTitle}/${id}`);
+      navigate(`/home/${id}/${formatTitle}`);
     }, 500);
   };
 
@@ -69,9 +69,6 @@ const AnimePopularity = () => {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
   if (isError) {
     return <div>Error</div>;
   }
@@ -111,7 +108,7 @@ const AnimePopularity = () => {
                               .map((genre, index) => (
                                 <div key={index} className="mb-2 col-span-1">
                                   <Button
-                                    onClick={() => handleFilterClick(genre)}
+                                    onClick={() => handleFilterClick(genre!)}
                                     className={`px-3 py-1 rounded ${
                                       selectedGenres.includes(genre!)
                                         ? "bg-blue-500 text-white"
