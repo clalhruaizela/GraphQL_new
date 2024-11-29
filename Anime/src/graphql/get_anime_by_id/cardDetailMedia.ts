@@ -79,6 +79,7 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
               large
               medium
             }
+            languageV2
           }
         }
       }
@@ -116,6 +117,7 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
         edges {
           role
           node {
+            id
             name {
               full
             }
@@ -124,12 +126,14 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
               medium
             }
           }
-          voiceActors(language: JAPANESE) {
+          voiceActors {
+            id
             name {
               full
             }
             image {
               large
+              medium
             }
             languageV2
           }
@@ -137,41 +141,4 @@ export const GET_PAGE_ANIME_MEDIA = graphql(`
       }
     }
   }
-  # query getAnimeCharactersAndVoiceActors($id: Int!) {
-  #   Media(id: $id, type: ANIME) {
-  #     bannerImage
-  #     coverImage {
-  #       large
-  #       medium
-  #     }
-  #     description
-  #     title {
-  #       romaji
-  #       english
-  #       native
-  #     }
-  #     characters {
-  #       edges {
-  #         role
-  #         node {
-  #           name {
-  #             full
-  #           }
-  #           image {
-  #             large
-  #             medium
-  #           }
-  #         }
-  #         voiceActors(language: JAPANESE) {
-  #           name {
-  #             full
-  #           }
-  #           image {
-  #             large
-  #           }
-  #           languageV2
-  #         }
-  #       }
-  #     }
-  #   }
 `);
