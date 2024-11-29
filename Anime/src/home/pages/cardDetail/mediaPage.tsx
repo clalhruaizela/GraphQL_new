@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Languages } from "lucide-react";
 
 const MediaPage = () => {
   const graphql = graphqlClient();
@@ -559,22 +560,42 @@ const MediaPage = () => {
                 className="md:col-span-8 mt-12 xl:col-span-6"
               >
                 <div className="col-span-6 grid  xl:grid-cols-8 pt-2 gap-2 xl:gap-10">
-                  <Select
-                    onValueChange={(value) => setSelectedLanguages(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a character" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Japanese">Japanese</SelectItem>
-                      <SelectItem value="English">English</SelectItem>
-                      <SelectItem value="Korean">Korean</SelectItem>
-                      <SelectItem value="Chinese">Chinese</SelectItem>
-                      <SelectItem value="German">German</SelectItem>
-                      <SelectItem value="Italian">Italian</SelectItem>
-                      <SelectItem value="French">French</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="col-span-6 flex justify-end">
+                    <Select
+                      onValueChange={(value) => setSelectedLanguages(value)}
+                    >
+                      <SelectTrigger className="w-52 ">
+                        <SelectValue placeholder="Japanese" />
+                      </SelectTrigger>
+
+                      {data?.Media?.characters?.edges &&
+                        (() => {
+                          // Collect unique languages from the voice actors
+                          const availableLanguages = Array.from(
+                            new Set(
+                              data.Media.characters.edges.flatMap((anime) =>
+                                anime?.voiceActors?.map(
+                                  (actor) => actor?.languageV2
+                                )
+                              )
+                            )
+                          ).filter((language): language is string =>
+                            Boolean(language)
+                          ); // Ensure no undefined values
+
+                          // Only display the select content if there are available languages
+                          return availableLanguages.length > 0 ? (
+                            <SelectContent>
+                              {availableLanguages.map((language) => (
+                                <SelectItem key={language} value={language}>
+                                  {language}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          ) : null;
+                        })()}
+                    </Select>
+                  </div>
                   {data?.Media?.characters?.edges?.flatMap((anime) =>
                     anime?.voiceActors
                       ?.filter(
@@ -583,30 +604,33 @@ const MediaPage = () => {
                       ?.map((voiceActor) => (
                         <Card
                           key={`${anime?.node?.id}-${voiceActor?.id}`}
-                          className="text-xs flex justify-between xl:col-span-4"
+                          className="text-xs  xl:col-span-4 "
                         >
-                          <div className="flex">
-                            <div className="w-20 h-full">
-                              <img
-                                src={anime?.node?.image?.large || ""}
-                                alt={anime?.node?.name?.full || ""}
-                                className="w-full h-full aspect-[2/1] rounded-l-sm "
-                              />
+                          <div className="grid grid-cols-6  ">
+                            <div className="col-span-3 flex ">
+                              <div className="w-20 h-full">
+                                <img
+                                  src={anime?.node?.image?.large || ""}
+                                  alt={anime?.node?.name?.full || ""}
+                                  className="w-full h-full aspect-[2/1] rounded-l-sm "
+                                />
+                              </div>
+                              <div className="justify-between py-2 pl-2 flex flex-col">
+                                <p>{anime?.node?.name?.full || ""}</p>
+                                <p> {anime?.role} </p>
+                              </div>
                             </div>
-                            <div className="justify-between py-2 pl-2 flex flex-col">
-                              <p>{anime?.node?.name?.full || ""}</p>
-                              <p> {anime?.role} </p>
-                            </div>
-                          </div>
-                          {anime?.voiceActors?.map((voiceActor) => (
-                            <div className=" flex  " key={voiceActor?.id}>
+                            <div
+                              className=" flex col-span-3 justify-end "
+                              key={voiceActor?.id}
+                            >
                               <div className=" flex flex-col justify-between text-right pr-2 py-2">
                                 <h3>{voiceActor?.name?.full}</h3>
                                 <p className=" text-gray-500 justify-end flex">
                                   {voiceActor?.languageV2}
                                 </p>
                               </div>
-                              <div className="w-20 h-full">
+                              <div className="w-20 h-full ">
                                 <img
                                   src={voiceActor!.image!.large || ""}
                                   alt={voiceActor!.name!.full || ""}
@@ -614,7 +638,7 @@ const MediaPage = () => {
                                 />
                               </div>
                             </div>
-                          ))}
+                          </div>
                         </Card>
                       ))
                   )}
