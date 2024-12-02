@@ -3,7 +3,7 @@ import { GET_PAGE_ANIME_MEDIA } from "@/graphql/get_anime_by_id/cardDetailMedia"
 import graphqlClient from "@/graphql/getGraphqlClient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Layout from "@/components/ui/layout/Layout";
@@ -15,12 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Languages } from "lucide-react";
+// import { Languages } from "lucide-react";
 
 const MediaPage = () => {
   const graphql = graphqlClient();
   const [selectedLanguages, setSelectedLanguages] = useState("Japanese");
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const MediaPage = () => {
   });
 
   const handleSuggestionClick = (id: number, title: string) => {
-    const formatTitle = title.replace(/\s+/g, "-");
+    const formatTitle = title.replace(/[\s/]+/g, "-");
     setTimeout(() => {
       window.scrollTo(0, 0);
       navigate(`/home/${id}/${formatTitle}`);
@@ -57,7 +57,7 @@ const MediaPage = () => {
   //   setSearchParams({ lang: updateLanguage.join(",") });
   // };
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
 
   const trailer = data?.Media?.trailer;
@@ -91,7 +91,7 @@ const MediaPage = () => {
                       className={`${
                         data?.Media?.bannerImage
                           ? " w-full h-full object-cover aspect-[2.5/3] xl:aspect-[1/1.5] rounded-sm -mt-4 "
-                          : " mt-24 rounded-sm md:mt-32 xl:mt-40  "
+                          : " mt-24 lg:mt-56 rounded-sm md:mt-32 xl:mt-44 2xl:mt-64 "
                       }`}
                     />
                   )}
@@ -100,7 +100,7 @@ const MediaPage = () => {
                   className={`${
                     data?.Media?.bannerImage
                       ? "gap-1 col-span-4 md:pl-20 flex flex-row mb-4"
-                      : "gap-1 col-span-4 md:pl-20 flex flex-row "
+                      : "gap-1 col-span-4 md:pl-20 flex flex-row  "
                   }`}
                 >
                   <div className="items-center">
@@ -117,7 +117,7 @@ const MediaPage = () => {
               className={`${
                 data?.Media?.bannerImage
                   ? "mt-10  md:mt-6  md:col-span-6 lg:col-span-9 xl:col-span-6 lg:block xl:block md:block"
-                  : "mt-20 md:mt-6 md:col-span-6 lg:col-span-9 xl:col-span-6 lg:block xl:block md:block"
+                  : "mt-20 lg:mt-28 md:col-span-6 lg:col-span-9 xl:col-span-6 lg:block xl:block md:block xl:mt-32"
               }`}
             >
               <div className="text-gray-600  pl-6 md:pl-0 md:px-4 lg:text-sm xl:pl-4">
@@ -383,9 +383,9 @@ const MediaPage = () => {
                         </div>
                       </div>
                     )}
-                  <div className="grid md:col-span-10  grid-cols-5 my-10">
+                  <div className="grid md:col-span-10   my-10">
                     <h1>Characters</h1>
-                    <div className="col-span-5 grid  xl:grid-cols-3 pt-2 gap-2 xl:gap-10">
+                    <div className=" grid  grid-cols-6 pt-2 gap-2 xl:gap-10">
                       {data?.Media?.characters?.edges
                         ?.filter(
                           (anime) =>
@@ -398,7 +398,7 @@ const MediaPage = () => {
                         .map((anime, index) => (
                           <Card
                             key={index}
-                            className=" text-xs flex justify-between xl:col-span-3 "
+                            className=" text-xs flex justify-between col-span-6 xl:col-span-3 "
                           >
                             <div className="flex  h-20  ">
                               <div className="w-20  h-full">
@@ -435,7 +435,7 @@ const MediaPage = () => {
                                     alt={
                                       anime!.voiceActors![0]!.name!.full || ""
                                     }
-                                    className="w-full h-full object-cover aspect-[2/1] rounded-r-sm"
+                                    className="w-full h-full object-cover aspect-[2/1] md:aspect-[3/1] rounded-r-sm"
                                   />
                                 </div>
                               </div>
@@ -559,8 +559,8 @@ const MediaPage = () => {
                 value="Characters"
                 className="md:col-span-8 mt-12 xl:col-span-6"
               >
-                <div className="col-span-6 grid  xl:grid-cols-8 pt-2 gap-2 xl:gap-10">
-                  <div className="col-span-6 flex justify-end">
+                <div className="">
+                  <div className=" flex justify-end">
                     <Select
                       onValueChange={(value) => setSelectedLanguages(value)}
                     >
@@ -596,52 +596,54 @@ const MediaPage = () => {
                         })()}
                     </Select>
                   </div>
-                  {data?.Media?.characters?.edges?.flatMap((anime) =>
-                    anime?.voiceActors
-                      ?.filter(
-                        (actor) => actor?.languageV2 === selectedLanguages
-                      )
-                      ?.map((voiceActor) => (
-                        <Card
-                          key={`${anime?.node?.id}-${voiceActor?.id}`}
-                          className="text-xs  xl:col-span-4 "
-                        >
-                          <div className="grid grid-cols-6  ">
-                            <div className="col-span-3 flex ">
-                              <div className="w-20 h-full">
-                                <img
-                                  src={anime?.node?.image?.large || ""}
-                                  alt={anime?.node?.name?.full || ""}
-                                  className="w-full h-full aspect-[2/1] rounded-l-sm "
-                                />
+                  <div className="col-span-6 grid  xl:grid-cols-8 pt-2 gap-2 xl:gap-10">
+                    {data?.Media?.characters?.edges?.flatMap((anime) =>
+                      anime?.voiceActors
+                        ?.filter(
+                          (actor) => actor?.languageV2 === selectedLanguages
+                        )
+                        ?.map((voiceActor) => (
+                          <Card
+                            key={`${anime?.node?.id}-${voiceActor?.id}`}
+                            className="text-xs  xl:col-span-4 "
+                          >
+                            <div className="grid grid-cols-6  ">
+                              <div className="col-span-3  xl:col-span-3 flex ">
+                                <div className="w-20">
+                                  <img
+                                    src={anime?.node?.image?.large || ""}
+                                    alt={anime?.node?.name?.full || ""}
+                                    className="w-full h-full object-cover aspect-[2/1] rounded-l-sm "
+                                  />
+                                </div>
+                                <div className="justify-between py-2 pl-2 flex flex-col">
+                                  <p>{anime?.node?.name?.full || ""}</p>
+                                  <p> {anime?.role} </p>
+                                </div>
                               </div>
-                              <div className="justify-between py-2 pl-2 flex flex-col">
-                                <p>{anime?.node?.name?.full || ""}</p>
-                                <p> {anime?.role} </p>
+                              <div
+                                className=" flex col-span-3 justify-end "
+                                key={voiceActor?.id}
+                              >
+                                <div className=" flex flex-col justify-between text-right pr-2 py-2">
+                                  <h3>{voiceActor?.name?.full}</h3>
+                                  <p className=" text-gray-500 justify-end flex">
+                                    {voiceActor?.languageV2}
+                                  </p>
+                                </div>
+                                <div className="w-14 lg:w-20 h-full ">
+                                  <img
+                                    src={voiceActor!.image!.large || ""}
+                                    alt={voiceActor!.name!.full || ""}
+                                    className="w-full h-full aspect-[1/1] rounded-r-sm"
+                                  />
+                                </div>
                               </div>
                             </div>
-                            <div
-                              className=" flex col-span-3 justify-end "
-                              key={voiceActor?.id}
-                            >
-                              <div className=" flex flex-col justify-between text-right pr-2 py-2">
-                                <h3>{voiceActor?.name?.full}</h3>
-                                <p className=" text-gray-500 justify-end flex">
-                                  {voiceActor?.languageV2}
-                                </p>
-                              </div>
-                              <div className="w-20 h-full ">
-                                <img
-                                  src={voiceActor!.image!.large || ""}
-                                  alt={voiceActor!.name!.full || ""}
-                                  className="w-full h-full aspect-[1/1] rounded-r-sm"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      ))
-                  )}
+                          </Card>
+                        ))
+                    )}
+                  </div>
                 </div>
               </TabsContent>
               <TabsContent

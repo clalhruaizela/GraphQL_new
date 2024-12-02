@@ -43,7 +43,7 @@ const AnimePopularity = () => {
   });
 
   const onClickCard = (id: number, title: string) => {
-    const formatTitle = title.replace(/\s+/g, "-");
+    const formatTitle = title.replace(/[\s/]+/g, "-");
     setTimeout(() => {
       navigate(`/home/${id}/${formatTitle}`);
     }, 500);

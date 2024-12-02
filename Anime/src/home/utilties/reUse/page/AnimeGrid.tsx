@@ -48,7 +48,7 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
   formatTimeUntilAiring,
 }) => {
   return (
-    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 xl:mx-96 gap-4">
+    <div className="col-span-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-5 2xl:grid-cols-6 mx-4 xl:mx-28 2xl:mx-96 gap-4">
       {isLoading ? (
         <Skeletons amount={48} className="h-80 w-60 col-span-1" />
       ) : (
@@ -71,13 +71,13 @@ const AnimeGrid: React.FC<AnimeGridProps> = ({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div>
-                        <img
-                          src={anime?.coverImage?.large || ""}
-                          alt={anime?.title?.english || ""}
-                          className="object-cover h-auto aspect-[2/3] md:aspect-[2/3] rounded-t-sm w-full"
-                        />
-                      </div>
+                      {/* <div> */}
+                      <img
+                        src={anime?.coverImage?.large || ""}
+                        alt={anime?.title?.english || ""}
+                        className="object-cover h-full aspect-[2/3] md:aspect-[2/3]   rounded-t-sm w-full"
+                      />
+                      {/* </div> */}
                     </TooltipTrigger>
                     <TooltipContent className="w-80 flex justify-center items-center flex-col  py-2">
                       <div className="">

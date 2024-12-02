@@ -43,7 +43,7 @@ const AnimeUpcoming = () => {
     enabled: !!searchParams,
   });
   const onClickCard = (id: number, title: string) => {
-    const formatTitle = title.replace(/\s+/g, "-");
+    const formatTitle = title.replace(/[\s/]+/g, "-");
     setTimeout(() => {
       window.scrollTo(0, 0);
       navigate(`/home/${id}/${formatTitle}`);

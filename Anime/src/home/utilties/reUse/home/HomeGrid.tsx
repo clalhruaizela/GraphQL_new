@@ -58,7 +58,13 @@ const HomeGrid: React.FC<AnimeGridProps> = ({
               key={anime?.id}
               className="w-full text-gray-400 hover:text-gray-600"
               onClick={() =>
-                onCardClick(anime?.id, anime?.title?.english || "")
+                onCardClick(
+                  anime?.id,
+                  anime?.title?.english ||
+                    anime?.title?.native ||
+                    anime.title?.romaji ||
+                    ""
+                )
               }
             >
               <div className="flex flex-col justify-center items-center mb-2 md:mb-5 h">
@@ -68,13 +74,13 @@ const HomeGrid: React.FC<AnimeGridProps> = ({
                       asChild
                       className="relative aspect-ratio-1/1 "
                     >
-                      <div className="absolute h-full w-full ">
-                        <img
-                          src={anime?.coverImage?.large || ""}
-                          alt={anime?.title?.english || ""}
-                          className="object-cover aspect-[3/5] md:aspect-[1/2]  lg:aspect-[2/3] rounded-t-sm w-full"
-                        />
-                      </div>
+                      {/* <div className=" h-full w-full "> */}
+                      <img
+                        src={anime?.coverImage?.large || ""}
+                        alt={anime?.title?.english || ""}
+                        className="object-cover aspect-[3/5] md:aspect-[1/2]  lg:aspect-[2/3] rounded-t-sm w-full h-full"
+                      />
+                      {/* </div> */}
                     </TooltipTrigger>
                     <TooltipContent className="w-80 flex justify-center items-center flex-col py-5">
                       <div>

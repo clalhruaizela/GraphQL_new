@@ -45,7 +45,7 @@ const Navbar = () => {
       } `}
     >
       <div className=" mx-auto text-center  ">
-        <h1 className="text-2xl font-semibold py-4"> SkyLark Website</h1>{" "}
+        <button className="text-2xl font-semibold py-4"> SkyLark </button>{" "}
       </div>
     </div>
   );
